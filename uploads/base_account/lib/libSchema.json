@@ -1,0 +1,34 @@
+{
+  "plotly-latest.min.js": {
+    "name": "plotly-latest.min.js",
+    "size": 6,
+    "version": "1.3.1",
+    "defaultID": "Plotly",
+    "uniqueID": "Plotly",
+    "order": "0"
+  },
+  "vega-embed.min.js": {
+    "name": "vega-embed.min.js",
+    "size": 2342749,
+    "version": "3.0.1",
+    "defaultID": "vegaEmbed",
+    "uniqueID": "vegaEmbed",
+    "order": "3"
+  },
+  "vega-lite.min.js": {
+    "name": "vega-lite.min.js",
+    "size": 18534,
+    "version": "3.0.1",
+    "defaultID": "vl",
+    "uniqueID": "vl",
+    "order": "2"
+  },
+  "vega.min.js": {
+    "name": "vega.min.js",
+    "size": 237582,
+    "version": "2.0",
+    "defaultID": "vega",
+    "uniqueID": "vega",
+    "order": "1"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "certKeyPath": "/etc/apache2/ssl/apache.key",
+  "certPath": "/etc/apache2/ssl/apache.crt",
+  "mongoDB": {
+    "host": "127.0.0.1",
+    "port": "27017",
+    "db": "session",
+    "url": "mongodb://localhost:27017/bpexplorer_sessions"
+  },
+  "rServerPort": 8888,
+  "pythonServerPort": 9999,
+  "sessionSecret": "$%#3hIrtAS%#zrT$",
+  "port": 11111
+}

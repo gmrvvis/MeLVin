@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MeLVin</title>
+    <script type="text/javascript" src="./js/validator.min.js"></script>
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <script type="text/javascript" src="./js/validation.js"></script>
+    <link rel="stylesheet" href="./assets/bootstrap.min.css" media="screen">
+    <link rel="stylesheet" href="./assets/fontawesome-all.css"/>
+    <link rel="stylesheet" href="./assets/main-app.css" media="screen">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8"/>
+</head>
+<body>
+<div class="container-fluid">
+    <div id="content">
+        <div class="content">
+            <div class="row">
+                <div class="form-container">
+                    <div class="card card-default">
+                        <div class="card-body">
+                            <div class="page-header  margin-top-0">
+                                <div class="logo-container">
+                                    <h1 class="display-2">MeLVin</h1>
+                                </div>
+                            </div>
+                            <div class="alert alert-info" role="alert">Enter your username <strong>or</strong> your
+                                email to recover your credentials.
+                                An email will be sent to the associated account email.
+                            </div>
+                            <form action="./recover" method="POST">
+                                <div class="form-group">
+                                    <label class="font-weight-bold mb-1">Username or Email</label>
+                                    <input type="text" class="form-control input-lg" name="username"
+                                           placeholder="Enter username or email" oninput="validateRecovery(this)"/>
+                                    <span class="help-block"></span>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block btn-lg margin-top-30">Recover
+                                    account
+                                </button>
+                            </form>
+                        </div>
+                        <div class="card-footer">
+                            <p class="text-center margin-0">
+                                <a href="./">Back to log in</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,125 @@
+.full-screen-loader {
+    margin: 0;
+    background: rgba(0,0,0,0.2) url("../images/background5.gif");
+}
+
+.full-screen-loader .navbar-brand {
+    font-family: Bungee Inline, Helvetica, Arial, sans-serif;
+    font-size: 20px;
+}
+
+.full-screen-loader .content {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    left: 0;
+    flex-flow: column;
+    padding-top: 5%;
+    width: 100%
+}
+
+.full-screen-loader .text-muted{
+    color:#535A63;
+}
+
+.full-screen-loader .form-container {
+    width: 500px;
+    margin: auto;
+    box-shadow: #3e3e3e 0 3px 7px 0px;
+}
+
+.full-screen-loader .input-lg {
+    height: 45px;
+}
+
+.full-screen-loader .margin-top-0 {
+    margin-top: 0;
+}
+
+.full-screen-loader .margin-top-30 {
+    margin-top: 30px;
+}
+
+
+.full-screen-loader .margin-0 {
+    margin: 0;
+}
+
+.full-screen-loader .p {
+    margin: 10px 0 0;
+}
+
+.full-screen-loader .padding-bottom-20 {
+    padding-bottom: 20px;
+}
+
+.full-screen-loader .divider {
+    width: 100%;
+    margin: 30px 0 10px 0;
+    padding: 0;
+    text-align: center;
+    color: #afafaf;
+}
+.full-screen-loader .divider:after {
+    display: inline-block;
+    margin: 0 0 8px 10px;
+    height: 1px;
+    content: "";
+    text-shadow: none;
+    background-color: #d2d2d2;
+    width: 140px;
+}
+.full-screen-loader .divider:before {
+    display: inline-block;
+    margin: 0 10px 8px 0;
+    height: 1px;
+    content: "";
+    text-shadow: none;
+    background-color: #d2d2d2;
+    width: 140px;
+}
+.full-screen-loader .form-group .help-block{
+    display: none;
+}
+.full-screen-loader .has-error .help-block {
+    display: inline;
+}
+
+.full-screen-loader .title-icon{
+    width: 120px;
+    height: 120px;
+    margin-right: 10px;
+}
+
+.full-screen-loader .logo-container{
+    margin:10px 0;
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.full-screen-loader .logo-container h3{
+    margin: 0;
+    font-weight: bold;
+    font-size: 40px;
+    color: #474747;
+    text-shadow: #565656 0 1px 0;
+}
+
+.full-screen-loader .logo-container h3 span{
+    color: #3071a9;
+}
+
+.full-screen-loader .load-image{
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.full-screen-loader .load-image img{
+    width: 10%;
+}

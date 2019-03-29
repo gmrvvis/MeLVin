@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MeLVin</title>
+    <script type="text/javascript" src="./js/validator.min.js"></script>
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <script type="text/javascript" src="./js/validation.js"></script>
+    <link rel="stylesheet" href="./assets/bootstrap.min.css" media="screen">
+    <link rel="stylesheet" href="./assets/fontawesome-all.css"/>
+    <link rel="stylesheet" href="./assets/main-app.css" media="screen">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8"/>
+</head>
+<body>
+<div class="container-fluid">
+    <div id="content">
+        <div class="content">
+            <div class="row">
+                <div class="form-container">
+                    <div class="card card-default">
+                        <div class="card-body">
+                            <div class="page-header  margin-top-0">
+                                <div class="logo-container">
+                                    <h1 class="display-2">MeLVin</h1>
+                                </div>
+                            </div>
+                            <% if (showError) { %>
+                            <div class="alert alert-danger" role="alert"> <%= message %></div>
+                            <% } %>
+                            <form action="./login" method="POST">
+                                <div class="form-group mb-3">
+                                    <label class="font-weight-bold  mb-1">Username</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="fa fa-user"></i>
+                                            </div>
+                                        </div>
+                                        <input type="text" class="form-control input-lg" name="username"
+                                               placeholder="Enter your username"
+                                               oninput="validateUsernameFormat(this)"/>
+                                    </div>
+                                    <span class="help-block"></span>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="font-weight-bold  mb-1">Password</label>
+                                    <div class="input-group">
+
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="fa fa-lock"></i>
+                                            </div>
+                                        </div>
+                                        <input type="password" name="password" class="form-control input-lg"
+                                               placeholder="Enter your password" oninput="validatePassword(this)"/>
+                                    </div>
+                                    <span class="help-block"></span>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block btn-lg" >Sign In</button>
+                                <p class="text-center pull-right p">
+                                    <a href="./recovery">Forgot your username or password?</a>
+                                </p>
+                            </form>
+                        </div>
+                        <!--<div class="card-footer">-->
+                            <!--<p class="text-center margin-0">-->
+                                <!--<span>Not registered? </span>-->
+                                <!--<a href="./register">Create an account.</a>-->
+                            <!--</p>-->
+                        <!--</div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

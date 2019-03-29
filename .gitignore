@@ -1,0 +1,9 @@
+uploads/*
+!uploads/base_account/
+node_modules/
+modules/
+auth/node_modules/
+auth/js/bundle.js
+*.idea
+package-lock.json
+auth/package-lock.json
