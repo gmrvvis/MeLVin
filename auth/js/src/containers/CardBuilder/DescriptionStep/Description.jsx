@@ -121,11 +121,10 @@ var Description = React.createClass({
 
 
         var connectionContent = (
-            <div className="p-3 flex-grow-1 d-flex flex-column" style={{overflow: "auto"}}>
+            <div className="p-3 flex-grow-1 d-flex flex-column mh-0 overflow">
                 <div className="card mb-3" style={{display: "block"}}>
-                    <div className="card-header font-bold"
-                         style={{display: "flex", alignItems: "center"}}>
-                        <h4 className="pull-left" style={{flexGrow: 1}}>Incoming connections</h4>
+                    <div className="card-header font-bold d-flex align-items-center">
+                        <h4 className="pull-left flex-grow">Incoming connections</h4>
                         <div className="btn-group">
                             <button className="fa fa-plus btn btn-outline-primary btn-sm"
                                     onClick={this.addConnection("in")}/>
@@ -329,10 +328,8 @@ var Description = React.createClass({
             {title: "Connections", component: connectionContent, icon: "fa fa-random"}];
 
         return (
-            <div className="container-content row wrap-cols">
-
-                <div className="col-6  pr-2 accordion-wrapper"
-                     style={{overflowY: "auto", padding: "15px"}}>
+            <div className="container-content row wrap-cols mh-0">
+                <div className="col-6 pl-2 accordion-wrapper h-100 overflow-y p-3">
                     {
                         leftComponents.map(function (obj, i) {
                             var containerClass = "accordion-container";
@@ -340,7 +337,7 @@ var Description = React.createClass({
                             var content;
                             var cevhronClass = "fa fa-plus";
                             if (self.props.config.open === i) {
-                                containerClass = "accordion-container full";
+                                containerClass = "accordion-container full flex-grow mh-0";
                                 titleClass = "title open";
                                 content = obj.component;
                                 cevhronClass = "fa fa-minus";

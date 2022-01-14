@@ -1,7 +1,7 @@
 var ConnectionTypes = require('./../constants/ConnectionTypes');
 var structTypes = require('./../constants/ConnectionStructTypes').types;
 var WorkerWrapper = require("../workers/WorkerWrapper");
-var RWorker = require("../workers/BackendScriptWorkerWrapper");
+var BackendWorker = require("../workers/BackendScriptWorkerWrapper");
 var ActionTypes = require('../actions/ActionTypes');
 var DataHandlerFactory = require('./DataHandling/DataHandlerFactory');
 var DataFlowDiagram = require('./DataFlowDiagram');
@@ -125,6 +125,7 @@ class WorkerSupervisor {
             this.notifyUpdate(cardKey);
 
         if (Object.keys(this.working).length === 0) this.dispatch({type: ActionTypes.HIDE_WORKING_MESSAGE});
+        if (this.workingQueue.length > 0) this.startWorking(this.workingQueue[0])
     }
 
     notifyUpdate(cardKey) {
@@ -412,8 +413,11 @@ class WorkerSupervisor {
                         if (input[ConnectionTypes.property[connection.type]] === undefined)
                             input[ConnectionTypes.property[connection.type]] = [];
 
-                        //TODO: check if no unique connection
-                        input[ConnectionTypes.property[connection.type]] = self.board.cards[connection.start][ConnectionTypes.property[connection.type]];
+                        var isUniqueConnection = _.filter(vizParams.cards[self.board.cards[cardKey].type].inConnections, {type: connection.type})[0].unique;
+                        if (isUniqueConnection)
+                            input[ConnectionTypes.property[connection.type]] = self.board.cards[connection.start][ConnectionTypes.property[connection.type]];
+                        else
+                            input[ConnectionTypes.property[connection.type]].push(self.board.cards[connection.start][ConnectionTypes.property[connection.type]]);
 
                         if (connection.type === ConnectionTypes.OPTION_CONNECTION && numOptionsId > 0) {
                             self.board.cards[connection.start][ConnectionTypes.property[connection.type]].forEach(function (option) {
@@ -433,8 +437,8 @@ class WorkerSupervisor {
                 var worker;
                 var cardType = self.board.cards[cardKey].type;
                 var cardSchema = vizParams.cards[self.board.cards[cardKey].type];
-                if (cardSchema.runOn === "r")
-                    worker = new RWorker(input, self.board.cards[cardKey], this.dispatch, cardKey, operationList);
+                if (cardSchema.runOn === "r" || cardSchema.runOn === "python")
+                    worker = new BackendWorker(input, self.board.cards[cardKey], this.dispatch, cardKey, operationList, cardSchema.runOn);
                 else
                     worker = new WorkerWrapper(input, state, this.dispatch, cardKey, operationList,
                         cardSchema.workerPath, cardType);

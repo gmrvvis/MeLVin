@@ -126,8 +126,8 @@ module.exports = React.createClass({
                     <input type="file" ref="submitData" name="files" multiple onChange={this.onAddFiles}/>
                 </form>
                 <div className="col-12 drop-zone">
-                    <span>DROP FILES HERE</span>
-                    <span>or</span>
+                    {/*<span>DROP FILES HERE</span>*/}
+                    {/*<span>or</span>*/}
                     <button className="btn btn-primary" style={{alignSelf: "center"}}
                             onClick={this.selectDataFiles}><span
                         className="fa fa-folder-open"/>{" Select files"}

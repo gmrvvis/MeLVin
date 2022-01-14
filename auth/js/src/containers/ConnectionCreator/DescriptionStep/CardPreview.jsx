@@ -12,8 +12,8 @@ var VizPreview = React.createClass({
         var jsonStructure = "structure";
         var objStructure = {};
 
-        var add = function(obj,node, structure){
-            switch (node.type){
+        var add = function (obj, node, structure) {
+            switch (node.type) {
                 case structTypes.OBJECT:
                     obj[node.title] = {};
                     break;
@@ -33,7 +33,7 @@ var VizPreview = React.createClass({
 
 
             var newObj = obj[node.title];
-            if(node.children.length>0 && node.type === structTypes.OBJECT)
+            if (node.children.length > 0 && node.type === structTypes.OBJECT)
                 node.children.forEach(function (childId) {
                     add(newObj, structure[childId], structure);
                 });
@@ -45,28 +45,16 @@ var VizPreview = React.createClass({
         jsonStructure = beautify(jsonStructure);
 
         return (
-            <div className="col-6 pl-2 pt-3 pb-3 accordion-wrapper-preview">
-                <div className="accordion-container" style={{height: "100%", display: "flex", flexFlow: "column"}}>
+            <div className="col-6 pl-2 pt-3 pb-3 accordion-wrapper-preview h-100">
+                <div className="accordion-container h-100 d-flex flex-column">
                     <div className='title open-dim d-flex justify-content-center'>
                         <h6 className="font-weight-bold pb-2 pt-2">Preview</h6>
                     </div>
-                    <div style={{
-                        backgroundColor: "#333",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flexGrow: 1,
-                        flexFlow: "column",
-                        paddingBottom: "15px"
-                    }} className="blueprint">
-                        <div className='col-12' style={{display: "flex",
-                            justifyContent: "center",
-                            flexGrow: 1,
-                            alignItems: "center",
-                            flexFlow: "column"
-                        }}>
+                    <div className="d-flex justify-content-center align-items-center flex-grow flex-column pb-3 blueprint mh-0"
+                         style={{backgroundColor: "#333"}}>
+                        <div className='full-height col-12 d-flex justify-content-center flex-grow align-items-center flex-column'>
                             <h5 style={{color: "#fff", fontWeight: "bold"}}>Internal property structure</h5>
-                                <CodePreview code={jsonStructure}/>
+                            <CodePreview code={jsonStructure}/>
                         </div>
                     </div>
                 </div>

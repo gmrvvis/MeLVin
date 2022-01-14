@@ -59,8 +59,8 @@ var Content = React.createClass({
         else if (this.props.selectedNavBarIndex === "blueprint") {
             blueprintContent = (
                 <div>
-                    <div className="full-height">
-                        <div className="full-height">
+                    <div className="h-100">
+                        <div className="h-100">
                             <OptionsLB/>
                             <Board/>
                             <FloatingMenu/>
@@ -86,7 +86,7 @@ var Content = React.createClass({
         }
 
         return (
-            <div className="blueprint full-height">
+            <div className="blueprint h-100 overflow-y">
                 {blueprintContent}
             </div>
         );

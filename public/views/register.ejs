@@ -28,14 +28,68 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="alert alert-info mt-3">
-                                <span>Registration is closed.</span>
-                            </div>
+
+                            <form action="./register" method="POST">
+                                <div class="form-group mb-3">
+                                    <label class="font-weight-bold mb-1">Username</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="fa fa-user"></i>
+                                            </div>
+                                        </div>
+                                        <input type="text" class="form-control  input-lg" name="username"
+                                               placeholder="Enter username" oninput="validateUsername(this)"/>
+                                    </div>
+                                    <span class="help-block"></span>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="font-weight-bold mb-1">Email</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="fa fa-envelope"></i>
+                                            </div>
+                                        </div>
+                                        <input type="text" class="form-control input-lg" name="email"
+                                               placeholder="Enter email" oninput="validateEmail(this)"/>
+                                    </div>
+                                    <span class="help-block"></span>
+                                </div>
+                                <div class="form-group mb-1">
+                                    <label class="font-weight-bold  mb-1">Password</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="fa fa-lock"></i>
+                                            </div>
+                                        </div>
+                                        <input type="password" name="password" class="form-control input-lg"
+                                               placeholder="Enter password" oninput="validatePassword(this)"/>
+                                    </div>
+                                    <span class="help-block"></span>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="fa fa-lock"></i>
+                                            </div>
+                                        </div>
+                                        <input type="password" name="password-conf" class="form-control input-lg"
+                                               placeholder="Confirm password" oninput="checkPassword(this)"/>
+                                    </div>
+                                    <span class="help-block"></span>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block btn-lg margin-top-30">Create
+                                    account
+                                </button>
+                            </form>
                         </div>
                         <div class="card-footer">
                             <p class="text-center margin-0">
-                                <span>Back to </span>
-                                <a href="./">sign in page.</a>
+                                <span>Already registered? </span>
+                                <a href="./">Sign in.</a>
                             </p>
                         </div>
                     </div>

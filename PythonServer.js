@@ -2,6 +2,9 @@ var net = require('net');
 var server = new net.Server();
 var clients = {};
 var spawn = require("child_process").spawn;
+var fs = require('fs');
+var serverConfig = JSON.parse(fs.readFileSync('config.json'));
+
 server.on('connection', function (socket) {
 
     socket.setEncoding('utf8');
@@ -24,7 +27,7 @@ server.on('connection', function (socket) {
 
                 };
 
-                var pyProcess = spawn('python',["./modules/Python/Worker.py", msgObject.username, msgObject.jobId]);
+                var pyProcess = spawn('python3',["./modules/Python/Worker.py", msgObject.username, msgObject.jobId]);
 
                 pyProcess.stdout.on('data', function (data){
                     console.log(data.toString());

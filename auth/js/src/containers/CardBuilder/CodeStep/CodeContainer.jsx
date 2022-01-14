@@ -25,13 +25,13 @@ var Code = React.createClass({
     render: function () {
         var self = this;
         return (
-            <div className="container-content row wrap-cols h-100">
+            <div className="container-content row wrap-cols mh-0">
                 <div className="col-6 p-3 pr-2 accordion-wrapper h-100">
-                    <div className="accordion-container" style={{height: "100%", display: "flex", flexFlow: "column"}}>
+                    <div className="accordion-container h-100" style={{display: "flex", flexFlow: "column"}}>
                         <div className="title open-dim d-flex justify-content-center" style={{flex: "none"}}>
                             <h6 className="mb-0 font-weight-bold pb-2 pt-2">Code</h6>
                         </div>
-                        <div className="d-flex justify-content-center flex-column flex-grow h-100 p-3">
+                        <div className="d-flex justify-content-center flex-column flex-grow p-3 mh-0">
                             <div>
                                 <label className="mb-0 font-weight-bold mr-1">Arguments</label>
                                 {
@@ -40,7 +40,7 @@ var Code = React.createClass({
                                     })
                                 }
                             </div>
-                            <div className="d-flex flex-column h-100">
+                            <div className="d-flex flex-column flex-grow mh-0">
                                 <label
                                     className="mb-0 font-weight-bold">Code</label>
                                 <CodeTextEditor onChange={self.onCodeChange}

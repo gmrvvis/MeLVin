@@ -40,8 +40,7 @@ var CodePreview = React.createClass({
             python: decodeURI("def%20process(input,%20state,%20dataHandler,%20setResult,%20setProgress):%20%0A%20%20%20%20#code#%0A%20%20%20%20setResult(state)%0A%0A")
         };
         return (
-            <div className="col-6 pl-2 pt-3 pb-3 accordion-wrapper-preview h-100"
-                 style={{padding: "15px"}}>
+            <div className="col-6 pl-2 pt-3 pb-3 accordion-wrapper-preview h-100 p-3">
                 <div className="accordion-container d-flex flex-column flex-grow h-100">
                     <div className='title open-dim d-flex justify-content-center'>
                         <h6 className="mb-0 font-weight-bold pb-2 pt-2">Preview</h6>

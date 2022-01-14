@@ -10,7 +10,9 @@ module.exports = React.createClass({
         CodeMirror(this.refs.renderCode.getDOMNode(), {
             value: this.props.code,
             mode: "javascript",
-            readOnly: 'nocursor'
+            readOnly: 'nocursor',
+            lineNumbers: true,
+            gutters: ["CodeMirror-lint-markers"],
         });
 
     },
@@ -20,7 +22,9 @@ module.exports = React.createClass({
         CodeMirror(this.refs.renderCode.getDOMNode(), {
             value: this.props.code,
             mode: "javascript",
-            readOnly: 'nocursor'
+            readOnly: 'nocursor',
+            lineNumbers: true,
+            gutters: ["CodeMirror-lint-markers"],
         });
 
     },
@@ -32,8 +36,10 @@ module.exports = React.createClass({
                 flexGrow: 1,
                 backgroundColor: "white",
                 width: "100%",
-                borderRadius: "4px"
-            }} className="full-height"/>
+                borderRadius: "4px",
+                overflow: "auto",
+                minHeight: "0px"
+            }}/>
         )
     }
 });

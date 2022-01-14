@@ -138,7 +138,7 @@ var GrammarEditor = React.createClass({
                         </button>
                     </div>
                     <div className="grammar-code">
-                        <div ref="renderCode" className="full-height" style={{width: "100%", height: "100%"}}/>
+                        <div ref="renderCode" className="h-100 w-100"/>
                     </div>
                 </div>
             );

@@ -71,9 +71,8 @@ var Code = React.createClass({
     render: function () {
         var self = this;
         return (
-            <div className="container-content row wrap-cols">
-                <div className="col-6 p-3 pr-2 accordion-wrapper"
-                     style={{overflowY: "auto", height: "100%"}}>
+            <div className="container-content row wrap-cols mh-0">
+                <div className="col-6 p-3 pr-2 accordion-wrapper h-100 overflow-y">
                     {
                         Object.keys(this.props.schema.methods).map(function (methodName) {
                             var open = self.props.config.open === methodName;
@@ -171,11 +170,11 @@ var Code = React.createClass({
                                 }
 
                                 content = (
-                                    <div className="container-fluid pb-3 d-flex flex-column h-100">
+                                    <div className="container-fluid pb-3 d-flex flex-column flex-grow mh-0">
                                         <div>
                                                 {args}
                                         </div>
-                                        <div className="d-flex flex-column flex-grow">
+                                        <div className="d-flex flex-column flex-grow mh-0">
                                                 <label className="mb-0 font-weight-bold">Code</label>
                                                 <CodeTextEditor onChange={self.onCodeChange(methodName)}
                                                                 code={method.code}
@@ -184,7 +183,7 @@ var Code = React.createClass({
                                     </div>
                                 );
 
-                                accordionClass = "accordion-container d-flex flex-column h-100"
+                                accordionClass = "accordion-container d-flex flex-column flex-grow mh-0 mh-30"
                             }
 
                             var removeButton = (

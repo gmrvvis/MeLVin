@@ -28,17 +28,17 @@ server.on('connection', function (socket) {
 
                 };
 
-                var pyProcess = spawn('Rscript',["./modules/R/Worker.R", msgObject.username, msgObject.jobId]);
+                var rProcess = spawn('Rscript',["./modules/R/Worker.R", msgObject.username, msgObject.jobId]);
 
-                pyProcess.stdout.on('data', function (data){
+                rProcess.stdout.on('data', function (data){
                     console.log(data.toString());
                 });
 
-                pyProcess.stderr.on('data', function(data) {
+                rProcess.stderr.on('data', function(data) {
                     console.error(data.toString());
                 });
 
-                pyProcess.on('exit', sendResponse);
+                rProcess.on('exit', sendResponse);
 
                 break;
         }

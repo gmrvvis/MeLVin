@@ -205,7 +205,7 @@ var Files = React.createClass({
 
         var removeConfirmation;
         if (this.state.showRemoveConfirmation) {
-            var descMsg = self.state.removeAll ? 'All files will be removed.' : 'File with name "' + self.state.removeName + '", will be permanently removed.';
+            var descMsg = self.state.removeAll ? 'All files will be removed.' : 'File "' + self.state.removeName + '", will be permanently removed.';
             removeConfirmation = (
                 <ConfirmModal
                     onClose={this.onCloseRemove}

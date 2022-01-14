@@ -217,7 +217,7 @@ class ViewsPanel {
         var self = this;
         return function (property, value) {
             self.workerSupervisor.setCardPropFromVizPanel(self.panelId, cardId, property, value);
-            self.updateRelatedViews(cardId, property);
+            //self.updateRelatedViews(cardId, property);
         }
     }
 }

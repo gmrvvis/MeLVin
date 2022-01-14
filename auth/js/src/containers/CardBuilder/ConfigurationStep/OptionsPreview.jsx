@@ -40,23 +40,9 @@ var VizPreview = React.createClass({
         });
 
         return (
-            <div style={{
-                backgroundColor: "#333",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexGrow: 1,
-                flexFlow: "column",
-                padding: "15px"
-            }} className="blueprint">
-                <div style={{
-                    backgroundColor: "#fff",
-                    padding: "15px",
-                    height: "100%",
-                    overflowY: "auto",
-                    width: "50%",
-                    minWidth: "350px",
-                }}>
+            <div style={{backgroundColor: "#333"}}
+                 className="blueprint d-flex justify-content-center align-items-center flex-grow flex-column p-3 mh-0">
+                <div className="p-3 h-100 overflow-y w-50 " style={{backgroundColor: "#fff", minWidth: "350px"}}>
                     {previewOptions}
                 </div>
             </div>

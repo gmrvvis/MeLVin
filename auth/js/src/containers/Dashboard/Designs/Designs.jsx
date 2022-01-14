@@ -143,7 +143,7 @@ var Content = React.createClass({
                 <ConfirmModal
                     onClose={this.onCloseRemove}
                     onConfirm={this.onRemove}
-                    description={'Desgin with name "' + removableSession.title + '", will be permanently removed.'}
+                    description={'Application "' + removableSession.title + '", will be permanently removed.'}
                     title={'Remove'}
                 />
             );

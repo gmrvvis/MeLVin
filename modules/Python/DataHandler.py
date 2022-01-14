@@ -5,6 +5,20 @@ class DataHandler:
     def __init__(self, data, schema):
         self.data = data
         self.schema = schema
+        self.changes = []
+
+    def get_attribute_from_data(self, data, column_name):
+        is_categorical = isinstance(data, np.ndarray) and (isinstance(data[0].item(), str) or isinstance(data[0].item(), bool))
+        attr = dict(name=column_name)
+        if is_categorical:
+            attr["attribute_type"] = "CATEGORICAL"
+            attr["uniqueValues"] = np.unique(data).aslist()
+        else:
+            attr["attribute_type"] = "QUANTITATIVE"
+            attr["max"] = np.max(data)
+            attr["min"] = np.min(data)
+
+        return attr
 
     def getSchema(self, dataset_index=0):
         return self.schema[dataset_index]
@@ -68,7 +82,7 @@ class DataHandler:
 
     def addRow(self, row, dataset_index=0):
         self.data[dataset_index].append(row)
-        pass
+        self.changes.append(dict(type="ADD_ROW", row=row, index=dataset_index))
 
     def updateRow(self, row_index, row, dataset_index=0):
         row_index = self.getRowIndex(row_index, dataset_index)
@@ -76,6 +90,7 @@ class DataHandler:
             raise ValueError("Out of bounds, the row index: " + row_index + " is not a valid row.")
         else:
             self.data[dataset_index][row_index] = row
+            self.changes.append(dict(type="UPDATE_ROW", rowIndex=row_index, row=row, index=dataset_index))
 
     def removeRow(self, row_index, dataset_index=0):
         row_index = self.getRowIndex(row_index, dataset_index)
@@ -83,9 +98,13 @@ class DataHandler:
             raise ValueError("Out of bounds, the row index: " + row_index + " is not a valid row.")
         else:
             self.data[dataset_index] = self.data[dataset_index].drop(row_index)
+            self.changes.append(dict(type="REMOVE_ROW", rowIndex=row_index, index=dataset_index))
 
     def addColumn(self, column_name, column, dataset_index):
         self.data[dataset_index][column_name] = column
+        self.changes.append(dict(type="ADD_COLUMN", column=column, columnName=column_name,
+                                 attr=self.get_attribute_from_data(column, column_name),
+                                 index=dataset_index))
 
     def updateColumn(self, column_name, column, dataset_index):
         column_index = self.getColumnIndex(column_name, dataset_index)
@@ -93,6 +112,9 @@ class DataHandler:
             raise ValueError("Column not found, the column: " + column_name + " does not exit.")
         else:
             self.data[dataset_index][column_index] = column
+            self.changes.append(dict(type="UPDATE_COLUMN", column=column, columnIndex=column_index,
+                                     attr=self.get_attribute_from_data(column, column_name),
+                                     index=dataset_index))
 
     def removeColumn(self, column_name, dataset_index):
         column_index = self.getColumnIndex(column_name, dataset_index)
@@ -100,6 +122,9 @@ class DataHandler:
             raise ValueError("Column not found, the column: " + column_name + " does not exit.")
         else:
             self.data[dataset_index] = self.data[dataset_index].drop(column_index, axis=1)
+            self.changes.append(dict(type="REMOVE_COLUMN", columnIndex=column_index, index=dataset_index))
 
-    def mergeDataset(self):
+    def addDataset(self, dataset):
+        self.data[len(self.data)] = dataset
+
         pass

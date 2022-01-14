@@ -266,7 +266,7 @@ var MainNavBar = React.createClass({
         sectionTabs = (
             <ul className="nav-tab border-r nav-shadow">
                 {layoutTab}
-                {grammarTab}
+                {/*{grammarTab}*/}
             </ul>
         );
 
@@ -286,9 +286,7 @@ var MainNavBar = React.createClass({
                                 <span className="fa fa-th" style={{marginRight: "0"}}/></a>
                         </li>
                     </ul>
-                    <span className="pl-3">M<span
-                        style={{fontSize: "16px", lineHeight: "16px"}}>e</span>LV<span
-                        style={{fontSize: "16px", lineHeight: "16px"}}>in</span></span>
+                    <span className="pl-3"><span style={{fontSize: "16px", lineHeight: "16px"}}>MeLVin</span></span>
                 </div>
                 {appNameBadge}
                 {panelTabs}

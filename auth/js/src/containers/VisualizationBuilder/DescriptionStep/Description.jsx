@@ -291,10 +291,8 @@ var Description = React.createClass({
             {title: "Connections", component: connectionContent, icon: "fa fa-random"}];
 
         return (
-            <div className="container-content row wrap-cols">
-
-                <div className="col-6 pr-2 accordion-wrapper"
-                     style={{overflowY: "auto",  padding: "15px", height: "100%"}}>
+            <div className="container-content row wrap-cols mh-0">
+                <div className="col-6 pl-2 accordion-wrapper h-100 overflow-y p-3">
                     {
                         leftComponents.map(function (obj, i) {
                             var containerClass = "accordion-container";
@@ -302,7 +300,7 @@ var Description = React.createClass({
                             var content;
                             var cevhronClass = "fa fa-plus";
                             if (self.props.config.open === i) {
-                                containerClass = "accordion-container full";
+                                containerClass = "accordion-container full flex-grow mh-0";
                                 titleClass = "title open";
                                 content = obj.component;
                                 cevhronClass = "fa fa-minus";

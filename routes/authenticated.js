@@ -45,8 +45,10 @@ module.exports = function (baseDir, storage, socketList, customVizManager, custo
             }
         });
         fs.writeFile(destPath, JSON.stringify(req.body), function (err) {
-            if (err) res.sendStatus(503);
-            res.sendStatus(200);
+            if (err)
+                res.sendStatus(503);
+            else
+                res.sendStatus(200);
         });
     });
 
@@ -80,8 +82,12 @@ module.exports = function (baseDir, storage, socketList, customVizManager, custo
             job.save()
         });
         fs.writeFile(destPath, JSON.stringify(req.body), function (err) {
-            if (err) res.sendStatus(503);
-            res.sendStatus(200);
+            if (err) {
+                console.log(err)
+                res.sendStatus(503);
+            } else {
+                res.sendStatus(200);
+            }
         });
     });
 
@@ -98,8 +104,12 @@ module.exports = function (baseDir, storage, socketList, customVizManager, custo
         });
 
         fs.writeFile(destPath, JSON.stringify(req.body), function (err) {
-            if (err) res.sendStatus(503);
-            res.sendStatus(200);
+            if (err) {
+                console.log(err)
+                res.sendStatus(503);
+            } else {
+                res.sendStatus(200);
+            }
         });
     });
 
@@ -149,8 +159,7 @@ module.exports = function (baseDir, storage, socketList, customVizManager, custo
                 Job.findOne({username: username, id: req.params.jobId}, function (err, job) {
                     if (err) {
                         console.error("Failed job addition for user: " + username);
-                    }
-                    else {
+                    } else {
                         fs.unlink(job.resultPath, function (err) {
                         });
                         job.remove();
@@ -296,16 +305,19 @@ module.exports = function (baseDir, storage, socketList, customVizManager, custo
             return file.path;
         });
 
-        sessionManager.importSessionBundle(username, filesPath[0], () => {
-            Session.find({username: username})
-                .select({title: 1, description: 1, lastModified: 1, id: 1, _id: 0})
-                .sort({lastModified: -1})
-                .exec(function (err, sessions) {
-                    socketList[username].emit("Session.reloadSessionList", {
-                        sessions: sessions
+        filesPath.forEach((filePath) => {
+            sessionManager.importSessionBundle(username, filePath, () => {
+                Session.find({username: username})
+                    .select({title: 1, description: 1, lastModified: 1, id: 1, _id: 0})
+                    .sort({lastModified: -1})
+                    .exec(function (err, sessions) {
+                        socketList[username].emit("Session.reloadSessionList", {
+                            sessions: sessions
+                        });
                     });
-                });
-        });
+            });
+        })
+
 
         res.sendStatus(200)
     });
@@ -405,7 +417,7 @@ module.exports = function (baseDir, storage, socketList, customVizManager, custo
     });
 
     router.get("/workers/js/:filename", function (req, res) {
-            res.sendFile(path.join(baseDir, 'uploads', req.user.username, 'customCards', 'functional', 'js', req.params.filename));
+        res.sendFile(path.join(baseDir, 'uploads', req.user.username, 'customCards', 'functional', 'js', req.params.filename));
     });
 
     router.get("/workers/schemas/:filename", function (req, res) {

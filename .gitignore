@@ -1,7 +1,9 @@
 uploads/*
-!uploads/base_account/
+!uploads/account_template.db
+!uploads/DR.app
+!uploads/PCP.app
+!uploads/RegNet.app
 node_modules/
-modules/
 auth/node_modules/
 auth/js/bundle.js
 *.idea

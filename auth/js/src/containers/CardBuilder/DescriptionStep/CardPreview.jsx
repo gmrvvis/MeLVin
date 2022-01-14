@@ -13,11 +13,8 @@ var VizPreview = React.createClass({
                     <div className='title open-dim d-flex justify-content-center'>
                         <h6 className="font-weight-bold pb-2 pt-2">Preview</h6>
                     </div>
-                    <div style={{
-                        backgroundColor: "#333",
-                        flexGrow: 1,
-                        overflowY: 'auto'
-                    }} className="blueprint d-flex justify-content-center align-items-center flex-column">
+                    <div style={{backgroundColor: "#333"}}
+                         className="blueprint d-flex justify-content-center align-items-center flex-column flex-grow overflow-y">
                         <div className='d-flex justify-content-center align-items-center flex-column mb-5 w-50'>
                             <h5 style={{color: "#fff", fontWeight: "bold"}}>MENU CARD</h5>
                             <div className="dragCard">

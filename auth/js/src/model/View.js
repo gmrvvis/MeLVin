@@ -29,7 +29,7 @@ class View {
             '<div class="viz-panel-heading">' +
             '<div class="d-flex">' +
             ' <span class="font-weight-bold title">' +
-            workerSupervisor.board.cards[cardId].title + ' - ' + viewId +
+            workerSupervisor.board.cards[cardId].title + ' - ' + cardId +
             ' </span>' +
             ' <div class="btn-edit-title">' +
             '  <i class="fa fa-pen"/>' +
@@ -153,7 +153,7 @@ class View {
         try {
             this.viewClass[methodName].apply(this.viewClass, this.viewProperties);
         } catch (e) {
-
+            //this.showError(e);
         }
     }
 
@@ -172,7 +172,7 @@ class View {
      * options and the own container if its an options view
      */
     unMount() {
-        if(this.hasOptions)
+        if (this.hasOptions)
             this.options.unMount();
         if (this.isOptionView)
             try {
@@ -239,8 +239,7 @@ class View {
                             }
                         });
                     }
-                }
-                else {
+                } else {
                     if (connection.type !== ConnectionTypes.DATA_CONNECTION) {
                         input[ConnectionTypes.property[connection.type]] =
                             workerSupervisor.board.cards[connection.start][ConnectionTypes.property[connection.type]];

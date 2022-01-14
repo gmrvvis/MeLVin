@@ -44,7 +44,7 @@ class Socket {
         var self = this;
         this.dispatch = dispatch;
         this.socket = io(window.location.hostname, {
-            path: '/gmrvvis/melvin/app/auth/wSocket',
+            path: '/auth/wSocket',
             transports: ['websocket']
         });
 

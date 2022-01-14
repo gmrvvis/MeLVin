@@ -53,7 +53,7 @@ var VizCreator = React.createClass({
                         Connection creation assistant
                     </h2>
                 </div>
-                <div className="flex-1 d-flex flex-row bg-white m-3"
+                <div className="flex-1 d-flex flex-row bg-white m-3 mh-0"
                      style={{
                          border: "1px solid #d4d4d4",
                          borderRadius: "4px",

@@ -128,7 +128,7 @@ var Description = React.createClass({
         var self = this;
 
         var descriptionContent = (
-            <div className="p-3 flex-grow-1 h-100" style={{overflow: "auto"}}>
+            <div className="p-3 flex-grow-1 mh-0" style={{overflow: "auto"}}>
                 <div className="row mb-3">
                     <div className="col-6">
                         <label className="font-weight-bold">Connection name</label>
@@ -236,7 +236,7 @@ var Description = React.createClass({
         }
 
         var propertySContent = (
-            <div className="p-3 flex-grow-1 h-100" style={{overflow: "auto"}}>
+            <div className="p-3 flex-grow-1 mh-0" style={{overflow: "auto"}}>
                 <div className="mb-3">
                     <div className="list-tree">
                         <ul>
@@ -257,9 +257,8 @@ var Description = React.createClass({
             {title: "Property structure", component: propertySContent, icon: "fa fa-align-left"}];
 
         return (
-            <div className="container-content row wrap-cols h-100">
-                <div className="col-6 pr-2 accordion-wrapper h-100"
-                     style={{overflowY: "auto", padding: "15px"}}>
+            <div className="container-content row wrap-cols flex-grow mh-0">
+                <div className="col-6 pr-2 accordion-wrapper h-100 p-3">
                     {
                         leftComponents.map(function (obj, i) {
                             var containerClass = "accordion-container";
@@ -267,7 +266,7 @@ var Description = React.createClass({
                             var content;
                             var cevhronClass = "fa fa-plus";
                             if (self.state.open === i) {
-                                containerClass = "accordion-container full";
+                                containerClass = "accordion-container full flex-grow mh-0";
                                 titleClass = "title open";
                                 content = obj.component;
                                 cevhronClass = "fa fa-minus";

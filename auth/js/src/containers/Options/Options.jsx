@@ -63,7 +63,7 @@ var Options = React.createClass({
                                                         startWork={this.startWork}/>;
             }
             return (
-                <div className="pt-3">
+                <div className="pt-3 h-100 overflow-y">
                     {optionsContent}
                 </div>
             );

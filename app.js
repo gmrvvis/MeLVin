@@ -9,11 +9,12 @@ var session = require('express-session');
 var app = express();
 var fs = require('fs');
 var serverConfig = JSON.parse(fs.readFileSync('config.json'));
-var options = {
-    key: fs.readFileSync(serverConfig.certKeyPath),
-    cert: fs.readFileSync(serverConfig.certPath)
-};
-var server = require('https').createServer(options,app);
+// var options = {
+//     key: fs.readFileSync(serverConfig.certKeyPath),
+//     cert: fs.readFileSync(serverConfig.certPath)
+// };
+// var server = require('https').createServer(options, app);
+var server = require('http').createServer(app);
 var MongoStore = require('connect-mongo')(session);
 var LocalStrategy = require('passport-local').Strategy;
 var Account = require('./models/Account');
@@ -46,7 +47,7 @@ let storage = multer.diskStorage({
     destination: function (req, file, cb) {
         switch (req.route.path) {
             case  '/uploadData':
-                cb(null, './uploads/' + req.user.username+ "/data");
+                cb(null, './uploads/' + req.user.username + "/data");
                 break;
             case  '/uploadViz':
                 cb(null, './uploads/' + req.user.username + "/customCards/visualizations/schemas");
@@ -64,7 +65,7 @@ let storage = multer.diskStorage({
                 cb(null, './uploads/' + req.user.username);
                 break;
             case  '/uploadConnection':
-                cb(null, './uploads/' + req.user.username+ "/temp");
+                cb(null, './uploads/' + req.user.username + "/temp");
                 break;
         }
     },
@@ -76,7 +77,7 @@ let storage = multer.diskStorage({
 
 app.disable('x-powered-by');
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.set('trust proxy','loopback');
+app.set('trust proxy', 'loopback');
 app.use(logger('common'));
 app.use(bodyParser.urlencoded({extended: true, limit: '100mb'}));
 app.use(bodyParser.json({extended: true, limit: '100mb'}));
@@ -96,9 +97,6 @@ app.set('views', [path.join(__dirname, '/public/views'), path.join(__dirname, '/
 passport.use(new LocalStrategy(Account.authenticate()));
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
-
-
-
 
 
 let usernameToken = '#username#';
@@ -133,7 +131,7 @@ function isNotAuthenticated(req, res, next) {
     res.redirect('./auth');
 }
 
-let publicSite = require('./routes/public')(passport);
+let publicSite = require('./routes/public')(passport, sessionManager);
 let authenticatedSite = require('./routes/authenticated')(__dirname, storage, socketList, customVizManager, customCardManager, sessionManager);
 
 app.use("/auth", isAuthenticated, authenticatedSite);
@@ -142,14 +140,14 @@ app.use("/auth", isAuthenticated, express.static(path.join(__dirname, 'auth')));
 app.use('/', isNotAuthenticated, publicSite);
 app.use("/", isNotAuthenticated, express.static(path.join(__dirname, 'public')));
 
-mongoose.connect('mongodb://localhost/bpexplorer_users', {useMongoClient: true});
+mongoose.connect('mongodb://localhost/melvin_users', {useMongoClient: true});
 
-var serverApp = server.listen(serverConfig.port, function () {
+var serverApp = server.listen(serverConfig.port, '0.0.0.0', function () {
     console.log('Listening at %s', serverApp.address().port);
 });
 
 
-var io = require('socket.io')(server, {path:'/auth/wSocket'});
+var io = require('socket.io')(server, {path: '/auth/wSocket'});
 io.use(passportSocketIo.authorize({
     cookieParser: cookieParser,
     key: 'connect.sid',

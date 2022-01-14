@@ -171,7 +171,7 @@ var VizCreator = React.createClass({
                         Card creation assistant - Processing card
                     </h2>
                 </div>
-                <div className="flex-1 d-flex flex-row bg-white m-3"
+                <div className="flex-1 d-flex flex-row bg-white m-3 mh-0"
                      style={{
                          border: "1px solid #d4d4d4",
                          borderRadius: "4px",

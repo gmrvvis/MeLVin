@@ -9,7 +9,7 @@ data <- list()
 changes <- list()
 
 
-jobs = mongo(collection = "jobs", db = "bpexplorer_users")
+jobs = mongo(collection = "jobs", db = "melvin_users")
 job = jobs$find(paste('{"username":"', username, '","id":"', jobId, '"}', sep =
 ""))
 
@@ -170,48 +170,6 @@ removeColumn = removeColumn,
 addDataset = addDataset
 )
 
-#addRowI <- function(data, row, index) {
-#  data[[index + 1]][nrow(data) + 1,] <<- row
-#  return(data)
-#}
-#
-#updateRowI <- function(data, rowIndex, row, index) {
-#  data[[index + 1]][rowIndex + 1,] <<- row
-#  return(data)
-#}
-#
-#removeRowI <- function(data, rowIndex, index) {
-#  data <<- data[[index + 1]][-rowIndex,]
-#  return(data)
-#}
-#
-#addColumnI <- function(data, columnName, column, index) {
-#  data[[index + 1]][, columnName]  <<- column
-#  return(data)
-#}
-#
-#updateColumnI <- function(data, columnIndex, column, index) {
-#  data[[index + 1]][, columnIndex]  <<- column
-#  return(data)
-#}
-#
-#removeColumnI <- function(data, columnIndex, index) {
-#  data[[index + 1]][, columnIndex]  <<- NULL
-#  return(data)
-#}
-#
-#dataInit <- list(
-#  getData = getDataI,
-#  setData = setDataI,
-#  addRow = addRowI,
-#  updateRow = updateRowI,
-#  removeRow = removeRowI,
-#  addColumn = addColumnI,
-#  updateColumn = updateColumnI,
-#  removeColumn = removeColumnI
-#)
-
-
 setResult <- function(state) {
     #print(c("RESULT: ", state))
 }
@@ -219,35 +177,6 @@ setResult <- function(state) {
 setProgress <- function(progress, info) {
     #print(c("PROGRESS: ", progress, info))
 }
-#fileData <- list()
-#for (i in 1:nrow(operationList$operations)) {
-#  operation <- operationList$operations[i, ]
-#  if (operation$type == "input") {
-#    fileData[[paste("DataSource", operation$id, sep = "")]] <- read.csv(
-#      file = paste(dir, operation$fileName, sep = ""),
-#      header = TRUE,
-#      sep = ","
-#    )
-#  }
-#}
-#
-#dataOfEachSource = list()
-#for (i in 1:nrow(operationList$operations)) {
-#  data <- list()
-#  operation <- operationList$operations[i, ]
-#  if (operation$type == "input") {
-#    data <-
-#      list(fileData[[paste("DataSource", operation$id, sep = "")]])
-#  }
-#  else{
-#    for (input in operation$input) {
-#      data <- list(data, fileData[[paste("DataSource", input, sep = "")]])
-#    }
-#  }
-#  for (i in 1:nrow(operationList$operations)) {
-#
-#  }
-#}
 
 state$dataHandler = dataHandler
 

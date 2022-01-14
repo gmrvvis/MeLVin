@@ -12,6 +12,7 @@ var CodePreview = React.createClass({
             value: this.generateCode(),
             mode: "javascript",
             lineNumbers: true,
+            readOnly: 'nocursor',
             gutters: ["CodeMirror-lint-markers"],
             lint: true
         });

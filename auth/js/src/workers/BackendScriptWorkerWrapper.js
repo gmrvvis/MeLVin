@@ -4,12 +4,13 @@ var socket = require('../model/Socket');
 
 class BackendScriptWorkerWrapper {
 
-    constructor(input, state, dispatch, id, operationList) {
+    constructor(input, state, dispatch, id, operationList, type) {
         this.input = input;
         this.state = state;
         this.dispatch = dispatch;
         this.id = id;
         this.operationList = operationList;
+        this.type = type
     }
 
     start() {
@@ -22,12 +23,14 @@ class BackendScriptWorkerWrapper {
 
         var self = this;
         this.worker = new Worker('./auth/workers/js/backendWorker.js');
-        this.worker.postMessage(JSON.stringify({type: 'work',
+        this.worker.postMessage(JSON.stringify({
+            type: 'work',
             data: {
                 input: this.input,
                 state: this.state,
                 operationList: this.operationList,
                 currentID: this.id,
+                type: this.type
             }
         }));
 

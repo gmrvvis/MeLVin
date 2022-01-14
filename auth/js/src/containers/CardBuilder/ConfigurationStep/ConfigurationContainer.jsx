@@ -68,9 +68,8 @@ var Config = React.createClass({
     render: function () {
         var self = this;
         return (
-            <div className="container-content row wrap-cols">
-                <div className="col-6 pl-2 accordion-wrapper"
-                     style={{overflowY: "auto", height: "100%", paddingTop: "15px"}}>
+            <div className="container-content row wrap-cols mh-0">
+                <div className="col-6 pl-2 accordion-wrapper h-100 overflow-y p-3">
                     {
                         this.props.schema.options.map(function (option, i) {
                             var open = self.props.config.open === i;
@@ -177,7 +176,7 @@ var Config = React.createClass({
                         ])
                     }
                 </div>
-                <div className="col-6 pl-2 pt-3 pb-3 accordion-wrapper-preview"
+                <div className="col-6 pl-2 pt-3 pb-3 accordion-wrapper-preview h-100"
                      style={{overflowY: "auto"}}>
                     <div className="accordion-container"
                          style={{display: "flex", flexDirection: "column", height: "100%"}}>

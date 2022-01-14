@@ -1861,7 +1861,7 @@ var Board = React.createClass({
     render: function () {
         return (
 
-            <div id="render" className="col full-height">
+            <div id="render" className="col h-100">
                 <div id="tooltip-render" style={{display: "none"}}><span></span></div>
                 <svg height="100%" width="100%" ref="container"/>
                 <div className="toolbar">

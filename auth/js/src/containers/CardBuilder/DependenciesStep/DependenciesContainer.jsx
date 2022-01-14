@@ -47,8 +47,7 @@ module.exports = React.createClass({
 
         return (
             <div className="container-content row wrap-cols">
-                <div className="col-6 pr-2 accordion-wrapper"
-                     style={{overflowY: "auto", padding: "15px"}}>
+                <div className="col-6 pr-2 accordion-wrapper overflow-y p-3">
                     {
                         leftComponents.map(function (obj, i) {
                             var containerClass = "accordion-container";
@@ -56,7 +55,7 @@ module.exports = React.createClass({
                             var content;
                             var cevhronClass = "fa fa-plus";
                             if (self.props.config.openLeft === i) {
-                                containerClass = "accordion-container full";
+                                containerClass = "accordion-container full flex-grow mh-0";
                                 titleClass = "title open";
                                 content = obj.component;
                                 cevhronClass = "fa fa-minus";
@@ -86,7 +85,7 @@ module.exports = React.createClass({
                             var content;
                             var cevhronClass = "fa fa-plus";
                             if (self.props.config.openRight === i) {
-                                containerClass = "accordion-container full";
+                                containerClass = "accordion-container full flex-grow mh-0";
                                 titleClass = "title open";
                                 content = obj.component;
                                 cevhronClass = "fa fa-minus";

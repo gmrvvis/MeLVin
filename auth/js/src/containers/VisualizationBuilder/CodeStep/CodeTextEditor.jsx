@@ -23,7 +23,7 @@ module.exports = React.createClass({
     render: function () {
         var self = this;
         return (
-            <div ref="renderCode" style={{border: "1px solid #dddddd", height: "100%", overflowY:"auto"}}/>
+            <div ref="renderCode" className="flex-grow mh-0" style={{border: "1px solid #dddddd", overflowY:"auto"}}/>
         )
     }
-});
+})

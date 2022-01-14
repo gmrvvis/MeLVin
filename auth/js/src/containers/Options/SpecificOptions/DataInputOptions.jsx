@@ -190,10 +190,20 @@ var DataInput = React.createClass({
                 </table>
             )
         }
+        else{
+            table = (
+                <div className="col-12 d-flex align-items-center justify-content-center">
+                    <div className="alert alert-info">
+                        <h5 className="text-center">Currently, no data is loaded. Use the above dropdown to load data from a file.</h5>
+                    </div>
+                </div>)
+        }
 
         var currentData;
-        if (!card.processing)
-            currentData = <p> Currently loaded: <strong>{this.state.loadedFileName}</strong></p>
+        if (card.schema && card.schema.attributes && !card.processing)
+            currentData = <p> Currently loaded file: <strong>{this.state.loadedFileName}</strong></p>
+        else if (!card.processing)
+            currentData = <p> Last loaded file: <strong>{this.state.loadedFileName}</strong></p>
 
         return (
             <div className="col">

@@ -1,9 +1,9 @@
 importScripts('../../js/src/model/DataHandling/DataHandlerFactory.js');
 importScripts('../../js/vendor/socket.io.js');
-var socket = io(location.hostname,{path:'/gmrvvis/melvin/app/auth/wSocket', transports: ['websocket']});
+var socket = io(location.hostname, {path: '/auth/wSocket', transports: ['websocket']});
 
-socket.on('Work.done',function (jobId) {
-    xhrGetRequest('../../jobs/'+jobId).then(function (response) {
+socket.on('Work.done', function (jobId) {
+    xhrGetRequest('../../jobs/' + jobId).then(function (response) {
         console.log("Work completed");
         response = JSON.parse(response);
         dataFactory.storeChanges(response.changes);
@@ -12,11 +12,10 @@ socket.on('Work.done',function (jobId) {
 });
 
 
-socket.on('Work.failed',function (jobId) {
+socket.on('Work.failed', function (jobId) {
     console.log("Work failed");
     setResult();
 });
-
 
 
 var setProgress = function (progress, info) {
@@ -100,18 +99,18 @@ function process(changes, state, operationList, setResult, setProgress) {
     });
 }
 
-function processData(dataHandler, input,  state, operationList, setResult, setProgress) {
+function processData(dataHandler, input, state, operationList, setResult, setProgress, type) {
     setProgress(1, "Creating task");
-    xhrRequest('POST', '../../jobs?id='+state.type, null).then(function (jobLocation) {
+    xhrRequest('POST', '../../jobs?id=' + state.type, null).then(function (jobLocation) {
         var contentPromises = [];
         var dataObj = {};
         dataHandler.data.map(function (data, i) {
-           dataObj["data"+i] = data;
+            dataObj["data" + i] = data;
         });
 
         var schemaObj = {};
         dataHandler.schema.map(function (schema, i) {
-            schemaObj["schema"+i] = schema.attributes;
+            schemaObj["schema" + i] = schema.attributes;
         });
 
         contentPromises.push(Promise.resolve(jobLocation));
@@ -120,14 +119,13 @@ function processData(dataHandler, input,  state, operationList, setResult, setPr
         contentPromises.push(xhrRequest('POST', jobLocation + '/schema', JSON.stringify(schemaObj)));
         contentPromises.push(xhrRequest('POST', jobLocation + '/state', JSON.stringify(state)));
         contentPromises.push(xhrRequest('POST', jobLocation + '/input', JSON.stringify(input)));
-        setProgress(2, "Sending changes");
+        setProgress(20, "Sending changes");
         return Promise.all(contentPromises);
     }).then(function (results) {
-        socket.emit('Work.start', results[0])
-    })
-        .catch(function (err) {
-            console.log("Failed to start job: " + err.message)
-        });
+        socket.emit('Work.start', {"id": results[0], "type": type})
+    }).catch(function (err) {
+        console.log("Failed to start job: " + err.message)
+    });
 }
 
 var operationList, dataFactory, currentID;
@@ -141,7 +139,7 @@ onmessage = function (message) {
             currentID = parsedMessage.data.currentID;
             dataFactory = new DataFactory("database", currentID, operationList);
             dataFactory.getDataHandler().then(function (dataHandler) {
-                self.processData(dataHandler, parsedMessage.data.input, parsedMessage.data.state, operationList, setResult, setProgress);
+                self.processData(dataHandler, parsedMessage.data.input, parsedMessage.data.state, operationList, setResult, setProgress, parsedMessage.data.type);
             });
             break;
 
