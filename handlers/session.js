@@ -21,15 +21,39 @@ module.exports = function (basedir, sessionManager, socket) {
 
                 console.log("INIT: " + JSON.stringify(sessions));
 
-                let dataFiles = [];
+                let dataFiles = {folders:{}, files:{}};
                 let previewFiles = [];
 
                 //TODO: remove async cascade
                 let dirPath = path.join(basedir, 'uploads', username, 'data');
                 fs.readdir(dirPath, function (err, folderContent) {
                     if (err) throw err;
-                    dataFiles = folderContent.filter(function (name) {
-                        return fs.lstatSync(path.join(dirPath, name)).isFile()
+
+                    // dataFiles = folderContent.map(function (name) {
+                    //     return {fs.lstatSync(path.join(dirPath, name)).isFile()
+                    // });
+
+                    // folderContent.map(function (filePath){return
+                    //     let relFilePath = filePath.substring(file_path.search("data")+5);
+                    //     let dirName = path.dirname(relFilePath);
+                    //     if (dirName === '.'){
+                    //         return {name: relFilePath, isFolder: false}
+                    //     }
+                    //     else{
+                    //         return {name: relFilePath, isFolder: false}
+                    //     }
+                    // })
+
+                    folderContent.forEach(function (name) {
+                        if (fs.lstatSync(path.join(dirPath, name)).isFile())
+                            dataFiles.files[name] = {name: name, isFolder: false}
+                        else {
+                            let files = {}
+                            fs.readdirSync(path.join(dirPath, name)).forEach(function (file) {
+                                files[file] = {name: file, isFolder: false}
+                            })
+                            dataFiles.folders[name] = {name: name, isFolder: true, files: files}
+                        }
                     });
 
                     let vizPath = path.join(basedir, 'uploads', username, 'customCards', 'visualizations', 'js');

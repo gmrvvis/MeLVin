@@ -95,8 +95,8 @@ class CustomVisualizationManager {
                     bundleSchema.previews.push(rPath);
                     archive.file(path.join(previewPath, filename), {name: rPath});
                 });
-
-                archive.append(JSON.stringify(bundleSchema), {name: "schema.json"});
+                let bundleString = JSON.stringify(bundleSchema);
+                archive.append(bundleString, {name: "schema.json"});
 
                 Dependency.find({username: username}).select({
                     username: 0,

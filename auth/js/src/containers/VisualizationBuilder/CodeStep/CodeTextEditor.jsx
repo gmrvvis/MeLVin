@@ -9,7 +9,7 @@ module.exports = React.createClass({
     },
 
     componentDidMount: function () {
-        var cm = CodeMirror(this.refs.renderCode.getDOMNode(), {
+        var cm = CodeMirror(this.refs.renderCode, {
             value: this.props.code,
             mode: this.props.mode || "javascript" ,
             lineNumbers: true,

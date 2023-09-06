@@ -25,12 +25,12 @@ var VisualizationPanel = React.createClass({
     },
 
     componentDidMount: function () {
-        var node = this.refs.panel.getDOMNode();
+        var node = this.refs.panel;
         viewsPanel.init(node, this.props.selectedVizPanelID);
     },
 
     componentDidUpdate: function () {
-        var node = this.refs.panel.getDOMNode();
+        var node = this.refs.panel;
         viewsPanel.init(node, this.props.selectedVizPanelID);
     },
 

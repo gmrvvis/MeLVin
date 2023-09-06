@@ -13,40 +13,46 @@ module.exports = React.createClass({
     onEdit: function (index) {
         var self = this;
         return function () {
-            var editing = self.state.editing;
-            editing[index] = true;
-            self.setState({editing: editing})
+            self.state.editing[index] = true;
+            self.setState({editing: self.state.editing})
+        }
+    },
+
+    onSetValue: function (value, index) {
+        let self = this;
+        return function () {
+            if (value !== self.state.value) {
+                self.state.editing[index] = false;
+                self.state.value[index] = value;
+                self.props.onUpdateOption("value", self.state.value);
+                self.setState({value: self.state.value})
+            }
         }
     },
 
     onCancelEdit: function (index) {
         var self = this;
         return function () {
-            var editing = self.state.editing;
-            editing[index] = false;
-            var values = self.state.value;
-            values[index] = self.props.specificOptions.value[index];
-
-            self.setState({editing: editing, value: values})
+            self.state.editing[index] = false;
+            self.state.value[index] = self.props.specificOptions.value[index];
+            self.setState({editing: self.state.editing, value:  self.state.value})
         }
     },
 
     onSaveEdit: function (index) {
         var self = this;
         return function () {
-            var editing = self.state.editing;
-            editing[index] = false;
+            self.state.editing[index] = false;
             self.props.onUpdateOption("value", self.state.value);
-            self.setState({editing: editing})
+            self.setState({editing: self.state.editing})
         }
     },
 
     onChange: function (index) {
         var self = this;
         return function (event) {
-            var values = self.state.value;
-            values[index] = event.target.value;
-            self.setState({value: values});
+            self.state.value[index] = event.target.value;
+            self.setState({value: self.state.value});
         }
     },
 
@@ -120,20 +126,36 @@ module.exports = React.createClass({
             var input = (
                 <div className="input-group mb-2">
                     <input type="text" className="form-control" spellCheck="false"
-                           disabled defaultValue={value}/>
+                           disabled value={value}/>
                     {editingOptions}
                 </div>
             );
 
             //Keys on button prevents focus style from persisting
             if (self.state.editing[i]) {
+                let attributesDropDown = self.props.attributes.map(function (attr) {
+                    return <a className="dropdown-item" href="#" onClick={self.onSetValue(attr, i)}>{attr}</a>
+                });
                 input = (
                     <div className="input-group mb-2">
                         <input type="text"
                                className="form-control"
-                               spellCheck="false" defaultValue={value}
+                               spellCheck="false" value={value}
                                onChange={self.onChange(i)}/>
                         <div className="input-group-append">
+                            <div className="dropdown">
+                                <button key="4"
+                                        type="button"
+                                        className="btn btn-outline-primary dropdown-toggle border-right-0 border-radius-0"
+                                        data-toggle="dropdown">
+                                </button>
+                                <div className="dropdown-menu scrollable-drop">
+                                    {attributesDropDown}
+                                    {/*<div className="dropdown-divider"></div>*/}
+                                    {/*<h6 className="dropdown-header">Suggestions might not be correct</h6>*/}
+                                    {/*<h6 className="dropdown-header">until complete DFD execution.</h6>*/}
+                                </div>
+                            </div>
                             <button key={i + "-0"}
                                     type="button"
                                     className="btn btn-outline-success"

@@ -2,7 +2,6 @@ var actionTypes = require('../actions/ActionTypes');
 var vizParams = require('../constants/CardsSchema');
 var notRelodable = ["files", "libFiles", "previewFiles", "sessions"];
 var initialState = {
-    lastCardID: 0,
     selectedCard: -1,
     tables: {},
     schemas: {},
@@ -183,6 +182,12 @@ function userInterface(state, action) {
         case actionTypes.SELECT_CARD:
             return Object.assign({}, state, {selectedCard: action.id});
 
+        case actionTypes.REMOVE_CARD:
+            if (action.id === state.selectedCard)
+                return Object.assign({}, state, {selectedCard: -1});
+            else
+                return state
+
         case actionTypes.SHOW_PROGRESS:
             return Object.assign({}, state, {progress: action.progress});
 
@@ -233,6 +238,9 @@ function userInterface(state, action) {
             var previewFiles = action.workspace.previewFiles ? action.workspace.previewFiles.concat() : state.previewFiles;
             var files = action.workspace.dataFiles ? action.workspace.dataFiles : state.files;
             var sessions = action.workspace.sessions ? action.workspace.sessions : state.sessions;
+
+           // TODO: improve file handling
+            window.files = files;
 
             return Object.assign({}, state, {
                 libFiles: libFiles,

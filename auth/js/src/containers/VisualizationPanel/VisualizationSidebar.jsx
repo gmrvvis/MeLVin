@@ -58,7 +58,8 @@ var VisualizationSidebar = React.createClass({
                                         <div className="container-fluid">
                                             <div className="row vertical-align">
                                                 <div className="col flex-grow title" style={{textAlign: "center"}}>
-                                                    <h5>{vizParams.cards[card.type].title}</h5>
+                                                    <h5>{card.title}</h5>
+                                                    <h6>{vizParams.cards[card.type].title}</h6>
                                                 </div>
                                             </div>
                                         </div>

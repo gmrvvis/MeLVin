@@ -12,8 +12,37 @@ var Input = require('../CustomOptions/Input');
 var InputList = require('../CustomOptions/InputList');
 var vizParams = require('../../../constants/CardsSchema');
 var DataInput = require('./DataInputOptions');
+const workerSupervisor = require("../../../model/WorkerSupervisor");
+const ConnectionTypes = require("../../../constants/ConnectionTypes");
 
 var CustomCardOptions = React.createClass({
+
+    getInitialState: function () {
+        return {ancestorDataAttributes: []}
+    },
+
+    updateAttributes: function (attributes) {
+        this.setState({ancestorDataAttributes: attributes});
+    },
+
+    componentDidMount: function () {
+        let self = this;
+        workerSupervisor.loadData(this.props.selectedCard).then(function () {
+
+            let parentConnections = workerSupervisor.board.cards[self.props.selectedCard].getAllParents();
+            let hasDataConnection = parentConnections.filter(function (connection) {
+                return connection.type === ConnectionTypes.DATA_CONNECTION;
+            }).length > 0;
+            let schema = {}
+            if (hasDataConnection)
+                schema = workerSupervisor.getSchema(self.props.selectedCard);
+            let attrList = Object.keys(schema.attributes).filter(function (key) {
+                return schema.attributes[key].name !== undefined
+            })
+            self.updateAttributes(attrList)
+            // workerSupervisor.removeData(self.props.selectedCard)
+        });
+    },
 
     onUpdateOption: function (optionID, optionIdentifier) {
         var self = this;
@@ -65,12 +94,18 @@ var CustomCardOptions = React.createClass({
 
                     case VisualizationOptions.RANGE_SLIDER:
                         //TODO: add range slider
-                        {/*<RangeSlider key={self.props.selectedCard + " - " + i}*/}
-                        {/*generalOptions={option}*/}
-                        {/*specificOptions={cardSpecificOptions[i]}*/}
-                        {/*onUpdateOption={self.onUpdateOption(i, option.id)}*/}
-                        {/*inPanel={self.props.inPanel || false}*/ }
-                        {/*/>*/}
+                    {/*<RangeSlider key={self.props.selectedCard + " - " + i}*/
+                    }
+                    {/*generalOptions={option}*/
+                    }
+                    {/*specificOptions={cardSpecificOptions[i]}*/
+                    }
+                    {/*onUpdateOption={self.onUpdateOption(i, option.id)}*/
+                    }
+                    {/*inPanel={self.props.inPanel || false}*/
+                    }
+                    {/*/>*/
+                    }
                         components.push(
                             <div/>
                         );
@@ -115,6 +150,7 @@ var CustomCardOptions = React.createClass({
                                    specificOptions={cardSpecificOptions[i]}
                                    onUpdateOption={self.onUpdateOption(i, option.id)}
                                    inPanel={self.props.inPanel || false}
+                                   attributes={self.state.ancestorDataAttributes}
                             />
                         );
                         break;
@@ -125,6 +161,7 @@ var CustomCardOptions = React.createClass({
                                        specificOptions={cardSpecificOptions[i]}
                                        onUpdateOption={self.onUpdateOption(i, option.id)}
                                        inPanel={self.props.inPanel || false}
+                                       attributes={self.state.ancestorDataAttributes}
                             />
                         );
                         break;
@@ -159,8 +196,7 @@ var CustomCardOptions = React.createClass({
                         </div>
                     );
                 });
-            }
-            else {
+            } else {
                 options = components.map(function (component) {
                     return (
                         <div className="mb-3">
@@ -177,8 +213,7 @@ var CustomCardOptions = React.createClass({
                     </div>
                 </div>
             );
-        }
-        catch (err) {
+        } catch (err) {
             return (
                 <div className="alert alert-danger">
                     <h5 className="text-center">{err.stack}</h5>

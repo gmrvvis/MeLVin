@@ -3,6 +3,23 @@ let fs = require('fs');
 const {promisify} = require('util');
 const unlinkFileAsync = promisify(fs.unlink);
 
+let parseFiles = function (dirPath, folderContent) {
+    let fileObj = {folders:{}, files:{}}
+    folderContent.forEach(function (name) {
+        if (fs.lstatSync(path.join(dirPath, name)).isFile())
+            fileObj.files[name] = {name: name, isFolder: false}
+        else {
+            let files = {}
+            fs.readdirSync(path.join(dirPath, name)).forEach(function (file) {
+                files[file] = {name: file, isFolder: false}
+            })
+            fileObj.folders[name] = {name: name, isFolder: true, files: files}
+        }
+    });
+
+    return fileObj
+}
+
 module.exports = function (basedir, socket) {
     let username = socket.client.request.user.username;
 
@@ -15,6 +32,7 @@ module.exports = function (basedir, socket) {
             console.log(username + ' renamed file: ' + oldBasename + " to " + newBasename + " correctly.");
             fs.readdir(dirPath, function (err, files) {
                 if (err) throw err;
+                files = parseFiles(dirPath, files)
                 socket.emit("File.list", files, {
                     category: 0,
                     title: "Correctly renamed file!",
@@ -29,6 +47,7 @@ module.exports = function (basedir, socket) {
         let dirPath = path.join(basedir, 'uploads', username, 'data');
         fs.readdir(dirPath, function (err, files) {
             if (err) throw err;
+            files = parseFiles(dirPath, files)
             socket.emit("File.list", files);
         });
     });
@@ -52,6 +71,7 @@ module.exports = function (basedir, socket) {
                     let dirPath = path.join(basedir, 'uploads', username, 'data');
                     fs.readdir(dirPath, (err, files) => {
                         if (err) throw err;
+                        files = parseFiles(dirPath, files)
                         socket.emit("File.list", files, {
                             category: 0,
                             title: "Correctly removed specified files!",
@@ -59,8 +79,7 @@ module.exports = function (basedir, socket) {
                         });
                     });
                 });
-        }
-        else {
+        } else {
             let dirPath = path.join(basedir, 'uploads', username, 'data');
             fs.readdir(dirPath, (err, files) => {
                 if (err) throw err;
@@ -77,6 +96,7 @@ module.exports = function (basedir, socket) {
                         let dirPath = path.join(basedir, 'uploads', username, 'data');
                         fs.readdir(dirPath, (err, files) => {
                             if (err) throw err;
+                            files = parseFiles(dirPath, files)
                             socket.emit("File.list", files, {
                                 category: 0,
                                 title: "Correctly renamed files!",
@@ -140,8 +160,7 @@ module.exports = function (basedir, socket) {
                         });
                     });
                 });
-        }
-        else {
+        } else {
             let dirPath = path.join(basedir, 'uploads', username, 'preview');
             fs.readdir(dirPath, (err, files) => {
                 if (err) throw err;

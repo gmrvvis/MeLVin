@@ -351,8 +351,9 @@ module.exports = function (baseDir, storage, socketList, customVizManager, custo
         res.render('auth');
     });
 
-    router.get("/files/:filename", function (req, res) {
-        res.sendFile(path.join(baseDir, 'uploads', req.user.username, 'data', req.params.filename));
+    router.get("/files/:folder/:filename", function (req, res) {
+        let folder = req.params.folder === 'root' ? "" : req.params.folder
+        res.sendFile(path.join(baseDir, 'uploads', req.user.username, 'data', folder, req.params.filename));
     });
 
     router.get("/connections/:property", function (req, res) {

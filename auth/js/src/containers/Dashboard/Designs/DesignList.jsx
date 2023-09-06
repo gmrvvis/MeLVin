@@ -34,7 +34,7 @@ module.exports = React.createClass({
     render: function () {
         var self = this;
         var fileListContent = (<div className="alert alert-info">
-            No files loaded on the server.
+            No applications loaded on the server.
         </div>);
 
 

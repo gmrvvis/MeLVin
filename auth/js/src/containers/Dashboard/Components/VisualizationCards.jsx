@@ -99,10 +99,11 @@ var VisualizationCards = React.createClass({
 
             visualizationCards = cards.map(function (vizID) {
                 var vizName = vizParams.names[vizID];
+                var vizTitle = vizParams.cards[vizID].title;
                 var card = vizParams.cards[vizID];
 
                 return (<Card thumbnail={card.thumbnail}
-                              name={vizName}
+                              name={vizTitle}
                               onDownload={self.downloadSchema(vizID)}
                               onEdit={function () {
                                   self.editSchema(vizName)

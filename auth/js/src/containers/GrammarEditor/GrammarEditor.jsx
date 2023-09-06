@@ -31,7 +31,7 @@ var GrammarEditor = React.createClass({
     },
 
     componentDidMount: function () {
-        this.cm = CodeMirror(this.refs.renderCode.getDOMNode(), {
+        this.cm = CodeMirror(this.refs.renderCode, {
             value: this.grammar,
             mode: "javascript",
             lineNumbers: true,

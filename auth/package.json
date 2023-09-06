@@ -1,7 +1,7 @@
 {
   "name": "melvin_web",
   "license": "Apache-2.0",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "private": true,
   "main": "webpack.confing.js",
@@ -24,7 +24,8 @@
     "object-assign": "~2.0.0",
     "papaparse": "^4.3.7",
     "prismjs": "^1.8.4",
-    "react": "~0.13.1",
+    "rc-slider": "^10.1.1",
+    "react": "~0.14.1",
     "react-bootstrap": "~0.23.7",
     "react-dom": "~0.14.0",
     "react-grid-layout": "~0.8.5",

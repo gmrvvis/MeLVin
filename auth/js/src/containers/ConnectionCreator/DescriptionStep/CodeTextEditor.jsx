@@ -5,9 +5,9 @@ var React = require('react');
 module.exports = React.createClass({
 
     componentDidMount: function () {
-        $(this.refs.renderCode.getDOMNode()).empty();
+        $(this.refs.renderCode).empty();
 
-        CodeMirror(this.refs.renderCode.getDOMNode(), {
+        CodeMirror(this.refs.renderCode, {
             value: this.props.code,
             mode: "javascript",
             readOnly: 'nocursor',
@@ -18,8 +18,8 @@ module.exports = React.createClass({
     },
 
     componentDidUpdate: function () {
-        $(this.refs.renderCode.getDOMNode()).empty();
-        CodeMirror(this.refs.renderCode.getDOMNode(), {
+        $(this.refs.renderCode).empty();
+        CodeMirror(this.refs.renderCode, {
             value: this.props.code,
             mode: "javascript",
             readOnly: 'nocursor',

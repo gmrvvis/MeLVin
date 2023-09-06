@@ -72,23 +72,23 @@ module.exports = React.createClass({
             if (files.length > 6) {
                 pagination = <nav className={"pagination-navbar"}>
                     <ul className="pagination">
-                        <li>
-                            <a href="#" onClick={this.onPreviousPage}>
+                        <li className="page-item">
+                            <a href="#" className="page-link" onClick={this.onPreviousPage}>
                                 <span>&laquo;</span>
                             </a>
                         </li>
                         {
                             pages.map(function (pageNumber) {
-                                var className = pageNumber === self.state.page ? "active" : "";
+                                var className = pageNumber === self.state.page ? "page-item active" : "page-item";
                                 return (
                                     <li className={className}>
-                                        <a href="#" onClick={self.onGoToPage(pageNumber)}>{pageNumber}</a>
+                                        <a className="page-link" href="#" onClick={self.onGoToPage(pageNumber)}>{pageNumber}</a>
                                     </li>
                                 )
                             })
                         }
-                        <li>
-                            <a href="#" onClick={this.onNextPage}>
+                        <li className="page-item">
+                            <a  className="page-link" href="#" onClick={this.onNextPage}>
                                 <span>&raquo;</span>
                             </a>
                         </li>

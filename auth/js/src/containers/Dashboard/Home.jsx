@@ -199,7 +199,7 @@ var Content = React.createClass({
                                     </h3>
                                     <button type="button" className="btn btn-sm btn-outline-dark"
                                             onClick={this.onShowAllDesigns}>
-                                        <i className="fa fa-th-large mr-1"/>
+                                        <i className="fa fa-grip mr-1"/>
                                         More
                                     </button>
                                 </div>
@@ -232,7 +232,7 @@ var Content = React.createClass({
                                                 </button>
                                                 <button className="btn btn-outline-dark btn-sm"
                                                         onClick={this.onShowVisualizations}>
-                                                    <i className="fa fa-th-large mr-2"/>
+                                                    <i className="fa fa-grip mr-2"/>
                                                     More
                                                 </button>
                                             </div>
@@ -254,7 +254,7 @@ var Content = React.createClass({
                                                 </button>
                                                 <button className="btn btn-outline-dark btn-sm"
                                                         onClick={this.onShowProcessing}>
-                                                    <i className="fa fa-th-large mr-2"/>
+                                                    <i className="fa fa-grip mr-2"/>
                                                     More
                                                 </button>
                                             </div>
@@ -276,7 +276,7 @@ var Content = React.createClass({
                                                 </button>
                                                 <button className="btn btn-outline-dark btn-sm"
                                                         onClick={this.onShowConnections}>
-                                                    <i className="fa fa-th-large mr-2"/>
+                                                    <i className="fa fa-grip mr-2"/>
                                                     More
                                                 </button>
                                             </div>
@@ -302,7 +302,7 @@ var Content = React.createClass({
                                                 className="card-footer d-flex justify-content-center align-items-center">
                                                 <button className="btn btn-outline-dark btn-sm"
                                                         onClick={this.onShowDataFiles}>
-                                                    <i className="fa fa-th-large mr-2"/>
+                                                    <i className="fa fa-grip mr-2"/>
                                                     More
                                                 </button>
                                             </div>
@@ -319,7 +319,7 @@ var Content = React.createClass({
                                                 className="card-footer d-flex justify-content-center align-items-center">
                                                 <button className="btn btn-outline-dark btn-sm"
                                                         onClick={this.onShowDependencies}>
-                                                    <i className="fa fa-th-large mr-2"/>
+                                                    <i className="fa fa-grip mr-2"/>
                                                     More
                                                 </button>
                                             </div>
@@ -336,7 +336,7 @@ var Content = React.createClass({
                                                 className="card-footer d-flex justify-content-center align-items-center">
                                                 <button className="btn btn-outline-dark btn-sm"
                                                         onClick={this.onShowThumbnails}>
-                                                    <i className="fa fa-th-large mr-2"/>
+                                                    <i className="fa fa-grip mr-2"/>
                                                     More
                                                 </button>
                                             </div>

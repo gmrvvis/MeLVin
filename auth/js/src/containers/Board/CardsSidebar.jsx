@@ -14,7 +14,7 @@ var CardsSidebar = React.createClass({
 
     _dragCardStart: function (event) {
         //TODO: Better way of connecting cards and html
-        var properties = _.find(this.props.cardsSchema, {id: $(event.target).prop("id")});
+        var properties = _.find(this.cardsSchema, {id: $(event.target).prop("id")});
         properties["type"] = "card";
         this.props.dispatch({type: ActionTypes.START_CARD_DRAGGING});
         //TODO: replace by reducer action
@@ -76,77 +76,81 @@ var CardsSidebar = React.createClass({
     render: function () {
         var self = this;
         this.cardMenu = vizParams.cardMenu;
-        this.props.cardsSchema = vizParams.cards;
+        this.cardsSchema = vizParams.cards;
         this.boardPositions = {};
-        var sidebarClass = "col-3 sidebar-right";
-        if (this.props.leftSideBarOpen && !this.props.cardBeingDragged) sidebarClass += " open-right";
 
         return (
             <div className="d-flex flex-column" style={{height: "100%"}}>
                 <div className="row-gray">
                     <h4 className="text-center mb-4 mt-4">Cards</h4>
-                    <ul className="nav nav-tabs nav-fill">
-                        {
-                            this.cardMenu.map(function (tab, i) {
-                                var className = i === self.props.leftSideBarTabIndex ? "nav-link active" : "nav-link";
-                                return (
-                                    <li key={i} className="nav-item">
-                                        <a href={"#" + tab.panelID} className={className} onClick={function () {
-                                            self._openTab(i)
-                                        }}>
-                                            {tab.panelName}
-                                        </a>
-                                    </li>
-                                )
-                            })
-                        }
-                    </ul>
+                    {/*<ul className="nav nav-tabs nav-fill">*/}
+                    {/*    {*/}
+                    {/*        this.cardMenu.map(function (tab, i) {*/}
+                    {/*            var className = i === self.props.leftSideBarTabIndex ? "nav-link active" : "nav-link";*/}
+                    {/*            return (*/}
+                    {/*                <li key={i} className="nav-item">*/}
+                    {/*                    <a href={"#" + tab.panelID} className={className} onClick={function () {*/}
+                    {/*                        self._openTab(i)*/}
+                    {/*                    }}>*/}
+                    {/*                        {tab.panelName}*/}
+                    {/*                    </a>*/}
+                    {/*                </li>*/}
+                    {/*            )*/}
+                    {/*        })*/}
+                    {/*    }*/}
+                    {/*</ul>*/}
                 </div>
                 <div className="container tab-content scroll-y pt-3">
                     {
                         this.cardMenu.map(function (tab, i) {
-                            var tabClass = ((i === self.props.leftSideBarTabIndex) ? "row tab-pane active" :
-                                "row tab-pane");
+                            var tabClass = ((i === self.props.leftSideBarTabIndex) ? "tab-pane active" :
+                                "tab-pane");
                             var cards = vizParams.cards;
-                            return (<div key={i} id={tab.panelID} className={tabClass}>{
-                                tab.cards.map(function (cardID, k) {
-                                    return (
-                                        <div key={k + '-' + i} className='col mb-3'>
-                                            <div className="shadow-card dragCard" id={cardID}
-                                                 onDragStart={self._dragCardStart} onDragEnd={self._onDragEnd}
-                                                 draggable="true">
-                                                <div className="card d-flex flex-row">
-                                                    <div className="d-flex align-items-center padding-0">
-                                                        <div className="thumbnail-cards m-bottom-0 border-0">
-                                                            <img src={"./" + cards[cardID].thumbnail}
-                                                                 className="disable-events thumbnail-image"/>
-                                                        </div>
-                                                    </div>
-                                                    <div className='bg-light flex-grow-1 border-left p-2'>
-                                                        <div className="container-fluid">
-                                                            <div className="row vertical-align justify-content-between">
-                                                                <div className="title">
-                                                                    <h5 className="font-weight-bold mb-0">{cards[cardID].title}</h5>
-                                                                </div>
-                                                                <button
-                                                                    className='btn btn-sm btn-empty'
-                                                                    onClick={self._addCard(cardID)}>
-                                                                    <i className="fa fa-plus"/>
-                                                                </button>
+                            return (<div key={i} id={tab.panelID} className={tabClass}>
+                                <div className="grid mb-3">
+                                {
+                                    tab.cards.map(function (cardID, k) {
+                                        return (
+                                            [<div key={k + '-' + i + 'a'}  className="h-100 w-100 d-flex align-items-center">
+                                                <div id={cardID}
+                                                     onDragStart={self._dragCardStart} onDragEnd={self._onDragEnd}
+                                                     draggable="true"
+                                                    className="d-flex align-items-center padding-0 card-grid shadow-card w-100">
+                                                <div className="card-input"></div>
+                                                <div className="card-content">
+                                                    <img src={"./" + cards[cardID].thumbnail}
+                                                         className="disable-events card-image p-2 pt-4 pb-3"/>
+                                                    <span className="pb-2">{cards[cardID].title}</span>
+                                                </div>
+                                                <div className="card-output"></div>
+                                                </div>
+                                            </div>
+                                                ,
+                                                <div key={k + '-' + i + 'b'}
+                                                     className='ml-2 flex-grow-1 pl-2 pr-2'>
+                                                    <div className="container-fluid">
+                                                        <div className="row vertical-align justify-content-between">
+                                                            <div className="title">
+                                                                <h5 className="font-weight-bold mb-0">{cards[cardID].title}</h5>
                                                             </div>
-                                                            <div className="row vertical-align">
-                                                                <div className="flex-grow description">
-                                                                    <h6>{cards[cardID].description}</h6>
-                                                                </div>
+                                                            <button
+                                                                className='btn btn-sm btn-empty'
+                                                                onClick={self._addCard(cardID)}>
+                                                                <i className="fa fa-plus"/>
+                                                            </button>
+                                                        </div>
+                                                        <div className="row vertical-align">
+                                                            <div className="flex-grow description">
+                                                                <h6>{cards[cardID].description}</h6>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    )
-                                })
-                            }
+                                            ]
+                                        )
+                                    }).flat(1)
+                                }
+                                </div>
                             </div>)
                         })
                     }

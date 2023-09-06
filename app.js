@@ -5,16 +5,18 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
+
 var session = require('express-session');
 var app = express();
 var fs = require('fs');
 var serverConfig = JSON.parse(fs.readFileSync('config.json'));
-// var options = {
-//     key: fs.readFileSync(serverConfig.certKeyPath),
-//     cert: fs.readFileSync(serverConfig.certPath)
-// };
-// var server = require('https').createServer(options, app);
-var server = require('http').createServer(app);
+var options = {
+    key: fs.readFileSync(serverConfig.certKeyPath),
+    cert: fs.readFileSync(serverConfig.certPath)
+};
+var server = require('https').createServer(options, app);
+// var server = require('http').createServer(app);
 var MongoStore = require('connect-mongo')(session);
 var LocalStrategy = require('passport-local').Strategy;
 var Account = require('./models/Account');
@@ -42,6 +44,9 @@ let processingEventHandler = require('./handlers/processing');
 let dependencyEventHandler = require('./handlers/dependencie');
 let backendWorkEventHandler = require('./handlers/backendWork');
 let connectionEventHandler = require('./handlers/connection');
+
+app.use(bodyParser.json({limit: '200mb'}));
+app.use(bodyParser.urlencoded({limit: '200mb', extended: true}));
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -140,7 +145,7 @@ app.use("/auth", isAuthenticated, express.static(path.join(__dirname, 'auth')));
 app.use('/', isNotAuthenticated, publicSite);
 app.use("/", isNotAuthenticated, express.static(path.join(__dirname, 'public')));
 
-mongoose.connect('mongodb://localhost/melvin_users', {useMongoClient: true});
+mongoose.connect('mongodb://localhost/melvin_users');
 
 var serverApp = server.listen(serverConfig.port, '0.0.0.0', function () {
     console.log('Listening at %s', serverApp.address().port);

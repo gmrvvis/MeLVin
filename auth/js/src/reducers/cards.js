@@ -21,8 +21,16 @@ function cards(state, action) {
                 }
             });
             var allIds = state.allIds.indexOf(id) === -1 ? state.allIds.concat([id]) : state.allIds.concat([]);
+            let nextID = -1;
+            if (id > state.lastId)
+                nextID = id + 1;
+            else if (id < state.lastId)
+                nextID = state.lastId
+            else
+                nextID = state.lastId + 1;
 
-            return Object.assign({}, state, {byId: byId, allIds: allIds, lastId: state.lastId+1});
+
+            return Object.assign({}, state, {byId: byId, allIds: allIds, lastId: nextID});
 
         case actionTypes.REMOVE_CARD:
 
@@ -74,7 +82,6 @@ function cards(state, action) {
             var byId = Object.assign({}, state.byId, {[action.id]: newCard});
 
             return Object.assign({}, state, {byId: byId});
-
 
 
         case actionTypes.START_WORK:

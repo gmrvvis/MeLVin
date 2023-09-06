@@ -7,7 +7,7 @@ var beautify = require('js-beautify').js_beautify;
 var CodePreview = React.createClass({
 
     componentDidMount: function () {
-        var domNode = this.refs.code.getDOMNode();
+        var domNode = this.refs.code;
         this.cm = CodeMirror(domNode, {
             value: this.generateCode(),
             mode: this.props.mode,

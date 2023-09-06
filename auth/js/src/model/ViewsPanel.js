@@ -35,7 +35,7 @@ class ViewsPanel {
             '   <h1 class="display-1">' +
             '     <i class="far fa-clone"></i>' +
             '   </h1>' +
-            '   <h1>Drop a visualization to add</h1>' +
+            '   <h1>Add visualization</h1>' +
             '  </div>' +
             '</div>');
 

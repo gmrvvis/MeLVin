@@ -17,28 +17,43 @@ var setResult = function (data) {
 
     dataHandler.db.transaction('rw', dataHandler.db.datasets, dataHandler.db.schemas, dataHandler.db.changes, function* () {
         dataHandler.db.datasets.where('name').startsWithIgnoreCase(indexName).delete();
-        var i = 1;
-        var maxBytes = 10 * 1024 * 1024;
-        var maxChars = Math.floor(maxBytes / 2);
-        var meanCharLength = JSON.stringify(data.data.data[0]).length * 4;
-        var maxLines = Math.min(1000, data.data.data.length - 1); //Math.floor(maxChars/meanCharLength);
-        var line = "[";
-        while (i <= data.data.data.length) {
-            line += JSON.stringify(data.data.data[i]);
-            if (i % maxLines === 0) {
-                line += "]";
+        // var i = 0;
+        // var maxBytes = 10 * 1024 * 1024;
+        // var maxChars = Math.floor(maxBytes / 2);
+        // var meanCharLength = JSON.stringify(data.data.data[0]).length * 4;
+        // var maxLines = Math.min(100, data.data.data.length - 1); //Math.floor(maxChars/meanCharLength);
+        // var line = "[";
+        // while (i < data.data.data.length) {
+        //     line += JSON.stringify(data.data.data[i]);
+        //     if ((i % maxLines === 0 && i !== 0) || (i + 1) === data.data.data.length) {
+        //         line += "]";
+        //         dataHandler.db.datasets.put({
+        //             name: indexName + "-" + Math.ceil(i / maxLines), source: indexName,
+        //             dataset: line
+        //         });
+        //         line = "[";
+        //     } else {
+        //         line += ",";
+        //     }
+        //     ++i;
+        // }
+
+        var i = 0;
+        var maxLines = Math.min(100, data.data.data.length - 1); //Math.floor(maxChars/meanCharLength);
+        var entry = [];
+        while (i < data.data.data.length) {
+            entry.push(data.data.data[i]);
+            if ((i % maxLines === 0 && i !== 0) || (i + 1) === data.data.data.length) {
                 dataHandler.db.datasets.put({
-                    name: indexName + "-" + Math.floor(i / maxLines), source: indexName,
-                    dataset: line
+                    name: indexName + "-" + Math.ceil(i / maxLines), source: indexName,
+                    dataset: entry
                 });
-                line = "[";
-            }
-            else {
-                line += ",";
+                entry = [];
             }
             ++i;
         }
 
+        // dataHandler.db.datasets.put({name: indexName, source: indexName, dataset: data.data.data});
         dataHandler.db.schemas.put({name: indexName, schema: data.data.schema});
         dataHandler.db.changes.put({name: indexName, change: []});
     }).then(function () {
@@ -53,16 +68,25 @@ var setResult = function (data) {
 };
 
 function process(input, options, setResult, setProgress, dataTable) {
+    console.log("Loading data");
     var fileName = options.fileName;
+    var folderName = options.folderName;
+    let url;
+    if (input.file) {
+        url = "../../files/" + input.file.folderName + "/" + input.file.fileName
+    } else {
+        url = "../../files/" + folderName + "/" + fileName
+    }
+
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "../../files/" + fileName, true);
+    xhr.open("GET", url, true);
 
     xhr.onload = function (e) {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
-                setProgress(40, "Parsing " + fileName);
+                setProgress(40, "Parsing data...")//" + folderName + "/" + fileName);
                 var dataStructure = Papa.parse(xhr.response, {dynamicTyping: true, skipEmptyLines: true});
-                setProgress(60, "Parsing " + fileName);
+                setProgress(60, "Parsing data...")
                 var schemaAttr = dataStructure.data.shift();
                 var schema = {attributes: {}};
                 schema.attributes["unique_index"] = {attribute_type: "PKEY"};
@@ -79,8 +103,7 @@ function process(input, options, setResult, setProgress, dataTable) {
                         });
                         attr.attribute_type = "CATEGORICAL";
                         attr.uniqueValues = uniqueValues;
-                    }
-                    else {
+                    } else {
                         var min = dataStructure.data[0][i];
                         var max = dataStructure.data[0][i];
                         dataStructure.data.forEach(function (data) {
@@ -93,9 +116,9 @@ function process(input, options, setResult, setProgress, dataTable) {
                     }
 
                     schema.attributes[attrName] = attr;
-                    setProgress(60 + (40 / schemaAttr.length * (i)), "Creating schema");
+                    setProgress(60 + (40 / schemaAttr.length * (i)), "Creating schema...");
                 });
-                setProgress(99, "Wrapping up");
+                setProgress(99, "Wrapping up...");
 
                 var date = new Date();
                 var currMili = date.getTime();
@@ -118,7 +141,7 @@ function process(input, options, setResult, setProgress, dataTable) {
     };
     xhr.onprogress = function (e) {
         if (e.lengthComputable) {
-            setProgress((e.loaded / e.total) * 40, "Loading " + fileName)
+            setProgress((e.loaded / e.total) * 40, "Loading " + folderName + "/" + fileName)
         }
     };
     xhr.send(null);

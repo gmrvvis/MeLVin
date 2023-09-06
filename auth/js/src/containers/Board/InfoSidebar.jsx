@@ -9,6 +9,31 @@ var ConnectionTypes = require('./../../constants/ConnectionTypes');
 
 var InfoSidebar = React.createClass({
 
+    getInitialState: function () {
+        return {
+            editingTitle: false,
+            newTitle: ""
+        }
+    },
+
+    _onOpenEditText: function () {
+        this.setState({editingTitle: true, newTitle: this.props.cards.byId[this.props.selectedCard].title})
+    },
+
+    _onCancelEditTitle: function () {
+        this.setState({editingTitle: false, newTitle: ""})
+    },
+
+    _onChangeTitle: function (event) {
+        this.setState({newTitle: event.target.value});
+    },
+
+    _onSaveTitle: function () {
+        let id =  this.props.selectedCard;
+        this.props.dispatch({type: ActionTypes.SET_CARD_PROP, value: this.state.newTitle, id: id, prop: "title"});
+        this.setState({editingTitle: false, newTitle: ""})
+    },
+
     _openTab: function (index) {
         this.props.dispatch({type: ActionTypes.OPEN_TAB_RIGHT_SIDEBAR, index: index})
     },
@@ -62,9 +87,7 @@ var InfoSidebar = React.createClass({
                 if (conn.start === selectedID) {
                     childConnectionsByType[conn.type].push(conn);
                     childConnectionsIds.push(conn.id);
-                }
-
-                else if (conn.end === selectedID) {
+                } else if (conn.end === selectedID) {
                     parentConnectionsByType[conn.type].push(conn);
                     parentConnectionsIds.push(conn.id);
                 }
@@ -115,10 +138,46 @@ var InfoSidebar = React.createClass({
                 )
             }
 
+            let title;
+
+            if (!this.state.editingTitle) {
+                title = (
+                    <div className="mt-4 mb-4 d-flex align-items-center justify-content-center">
+                        <h4 className="mr-2">{selectedCard.title}</h4>
+                        <h6 className="fa fa-pencil-alt" onClick={this._onOpenEditText}></h6>
+                    </div>
+                )
+            } else {
+                title = (
+                    <div className="mt-4 mb-4 d-flex align-items-center justify-content-center">
+                        <div className="input-group pl-2">
+                            <input type="text"
+                                   className="form-control"
+                                   spellCheck="false" value={this.state.newTitle}
+                                   onChange={this._onChangeTitle}/>
+                            <div className="input-group-append">
+                                <button key="0"
+                                        type="button"
+                                        className="btn btn-outline-success"
+                                        onClick={this._onSaveTitle}>
+                                    <span className="fa fa-check-circle"/>
+                                </button>
+                                <button key="1"
+                                        type="button"
+                                        className="btn btn-outline-danger"
+                                        onClick={this._onCancelEditTitle}>
+                                    <span className="fa fa-times-circle"/>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
             return (
                 <div className="d-flex flex-column" style={{height: "100%"}}>
                     <div className="row-gray">
-                        <h4 className="text-center mt-4 mb-4">{selectedCard.title} {selectedCard.id}</h4>
+                        {title}
                         <ul className="nav nav-tabs nav-fill">
                             {
                                 tabs.map(function (tab, i) {
@@ -137,14 +196,13 @@ var InfoSidebar = React.createClass({
                         </ul>
                     </div>
                     <div className="container tab-content scroll-y">
-                        <div className="row tab-pane active">
+                        <div className="row tab-pane h-100 active">
                             {tabs[openTabIndex].content}
                         </div>
                     </div>
                 </div>
             )
-        }
-        else {
+        } else {
             return (
                 <div className="col-12 d-flex align-items-center justify-content-center">
                     <div className="alert alert-info">

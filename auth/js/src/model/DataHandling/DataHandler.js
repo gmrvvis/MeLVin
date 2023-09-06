@@ -313,6 +313,23 @@ class DataHandler {
         }
     }
 
+    removeDataset(index, updateCurrent){
+        if (index >= 0 && index < this.data.length) {
+            updateCurrent = updateCurrent !== undefined ? updateCurrent : true;
+            if (updateCurrent) {
+                this.data = this.data.splice(index, 1)
+                this.schema = this.schema.splice(index, 1)
+            }
+            this.changes.push({
+                type: "REMOVE_DATASET",
+                index: index
+            });
+        }
+        else{
+            throw "Data set index out of bounds";
+        }
+    }
+
 }
 
 if (typeof WorkerGlobalScope === 'undefined' || !self instanceof WorkerGlobalScope) {

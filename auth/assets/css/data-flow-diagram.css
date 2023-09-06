@@ -16,11 +16,11 @@
     pointer-events: none;
 }
 
-.blueprint .card-container .card-footer > text > tspan:nth-child(1) {
+.blueprint .card-container .card-footer > text:nth-child(2) {
     font-weight: bold;
 }
 
-.blueprint .card-container .card-footer > text > tspan:nth-child(2) {
+.blueprint .card-container .card-footer > text:nth-child(3) {
     fill: #444444;
 }
 
@@ -147,10 +147,9 @@
 }
 
 .blueprint .paths {
-    stroke-width: 1;
-    stroke: black;
+    stroke-width: 3!important;
     fill: none;
-    stroke-dasharray: 10, 2;
+    stroke-dasharray: 10, 4;
 }
 
 .blueprint .viz-path {
@@ -217,10 +216,6 @@
 
 .blueprint .sidebar-right .alert {
     margin-top: 20px;
-}
-
-.blueprint .shadow-card {
-    box-shadow: #ebebeb 0 2px 4px 0;
 }
 
 .tiny-shadow {
@@ -332,6 +327,10 @@
 
 .blueprint .flex-grow {
     flex-grow: 1;
+}
+
+.height-0 {
+    height: 0;
 }
 
 .blueprint .open-left {

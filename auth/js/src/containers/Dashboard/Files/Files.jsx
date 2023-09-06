@@ -13,6 +13,7 @@ var Files = React.createClass({
     getInitialState: function () {
         return {
             fadeIn: false,
+            folderName: undefined,
             showFileUpload: false,
             oldFileName: "",
             newFileName: "",
@@ -70,6 +71,16 @@ var Files = React.createClass({
         this.setState({showRemoveConfirmation: false});
     },
 
+    onOpenFolder: function (folderName) {
+        var self = this;
+        return function () {
+            self.setState({folderName: folderName});
+        }
+    },
+
+    onCloseFolder: function () {
+        this.setState({folderName: undefined});
+    },
 
     downloadFile: function (path) {
         var self = this;
@@ -109,9 +120,17 @@ var Files = React.createClass({
 
     render: function () {
         var self = this;
+
+        let fileList = []
+        if (this.state.folderName) {
+            fileList = Object.values(this.props.files.folders[this.state.folderName].files)
+        } else {
+            fileList =  Object.values(this.props.files.folders).concat(Object.values(this.props.files.files))
+        }
+
         var buttons = [{action: this.onShowFileUpload, text: 'Upload file', iconClass: 'fa fa-upload'}];
 
-        if (this.props.files.length > 1) {
+        if (fileList.length > 1) {
             buttons.push({action: this.onOpenRemoveAll, text: 'Remove all', iconClass: 'fa fa-trash'});
         }
 
@@ -119,12 +138,31 @@ var Files = React.createClass({
             <h3>No files loaded</h3>
         </div>);
 
-        var emptyClass = "d-flex justify-content-center align-items-center";
-        if (this.props.files.length > 0) {
-            emptyClass = "";
-            files = this.props.files.map(function (fileName) {
+        if (fileList.length > 0) {
+            files = fileList.map(function (fileEntry) {
                 var footer;
-                if (self.state.oldFileName === fileName) {
+                let fileName = fileEntry.name
+                if (fileEntry.isFolder) {
+                    footer = <div className="row vertical-align">
+                        <div className="flex-grow title">
+                            <h6 className="m-0">{fileName}</h6>
+                        </div>
+                        <div className="ml-1">
+                            <button
+                                className="btn btn-outline-secondary btn-sm"
+                                onClick={self.onOpenFolder(fileName)}
+                            >
+                                <span className="fa fa-folder-open"/>
+                            </button>
+                        </div>
+                        <div className="ml-1">
+                            <button className="btn btn-outline-secondary btn-sm"
+                                    onClick={self.onOpenRemove(fileName)}>
+                                <span className="fa fa-trash"/>
+                            </button>
+                        </div>
+                    </div>
+                } else if (self.state.oldFileName === fileName) {
                     footer = (
                         <div className="input-group">
                             <input type="text"
@@ -175,13 +213,20 @@ var Files = React.createClass({
                         </div>
                     </div>
                 }
+
+                let icon_path = ""
+                if (!fileEntry.isFolder)
+                    icon_path = "./auth/assets/images/" + fileName.split('.').pop() + ".svg"
+                else
+                    icon_path = "./auth/assets/images/folder.svg"
+
                 return (
                     <div className='col-md-12 col-lg-6 col-xl-3 mb-3 mt-3'>
                         <div className="card bg-light h-100 d-flex flex-grow">
                             <div
                                 className="card-body p-0 flex-grow d-flex align-items-center justify-content-center ">
                                 <div className="thumbnail m-bottom-0 border-0">
-                                    <img src={"./auth/assets/images/" + fileName.split('.').pop() + ".svg"}
+                                    <img src={icon_path}
                                          className="disable-events thumbnail-image" style={{height: "10vh"}}/>
                                 </div>
                             </div>

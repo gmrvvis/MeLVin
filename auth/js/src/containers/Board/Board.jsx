@@ -21,15 +21,15 @@ var Board = React.createClass({
     getDefaultProps: function () {
         return {
             margin: {top: 20, right: 10, bottom: 20, left: 10},
-            cardDim: {height: 160, width: 200, margin: 40},
-            boardDataMutable: {}
+            cardDim: {height: 160, width: 200, margin: 40}
         };
     },
 
     componentDidMount: function () {
-        var container = this.refs.container.getDOMNode();
+        var container = this.refs.container;
         this.translate = this.props.ui.translate || [0, 0];
         this.scale = this.props.ui.scale || 1;
+        this.boardDataMutable = {};
         this.createBlueprint(container);
         this.updateBoard(container, this.props);
         this.attachListeners(this.svgNode, container, this.realSVG);
@@ -44,13 +44,12 @@ var Board = React.createClass({
 
         this.boardPositions = {};
         this.connectionsMutable = [];
-        this.props.vizConnections = [];
 
         //TODO: fix loaded zoom
         d3.select(container).select("svg g")
             .attr("transform", "translate(" + self.translate + ")scale(" + self.scale + ")");
 
-        this.props.cards.allIds.forEach(function (id) {
+        updatedState.cards.allIds.forEach(function (id) {
             var card = self.props.cards.byId[id];
 
             var layers = [];
@@ -60,43 +59,43 @@ var Board = React.createClass({
                     layers.push(layerKey);
             });
 
-            if (typeof self.props.boardDataMutable[id] === "undefined")
-                self.props.boardDataMutable[id] = new Card({});
+            if (typeof self.boardDataMutable[id] === "undefined")
+                self.boardDataMutable[id] = new Card({});
 
             //Update board data card properties to allow d3 data binding to work
             for (var cardProperty in card) {
                 if (card.hasOwnProperty(cardProperty)) {
-                    self.props.boardDataMutable[id][cardProperty] = card[cardProperty];
+                    self.boardDataMutable[id][cardProperty] = card[cardProperty];
                 }
             }
-            self.props.boardDataMutable[id]._layer = layers;
+            self.boardDataMutable[id]._layer = layers;
         });
 
         self.connectionsMutable = updatedState.connections.allIds.map(function (id) {
             return updatedState.connections.byId[id];
         });
 
-        for (var property in this.props.boardDataMutable) {
-            if (this.props.boardDataMutable.hasOwnProperty(property)
-                && !this.props.cards.byId.hasOwnProperty(property)) {
-                delete this.props.boardDataMutable[property];
-            } else {
-                var card = this.props.boardDataMutable[property];
+        for (var property in this.boardDataMutable) {
+            // if (this.boardDataMutable.hasOwnProperty(property)
+            //     && !this.props.cards.byId.hasOwnProperty(property)) {
+            //     delete this.boardDataMutable[property];
+            // } else {
+            var card = this.boardDataMutable[property];
 
-                if (card.id >= self.props.lastCardID)
-                    self.props.lastCardID = card.id + 1;
+            // if (card.id >= self.props.lastCardID)
+            //     self.props.lastCardID = card.id + 1;
 
-                self.boardPositions["" + card.posX + " " + card.posY] = true;
-                card.children = [];
-                card.parents = [];
+            self.boardPositions["" + card.posX + " " + card.posY] = true;
+            card.children = [];
+            card.parents = [];
 
-                self.connectionsMutable.forEach(function (connection) {
-                    if (connection.start === card.id)
-                        card.children.push(connection);
-                    if (connection.end === card.id)
-                        card.parents.push(connection);
-                });
-            }
+            self.connectionsMutable.forEach(function (connection) {
+                if (connection.start === card.id)
+                    card.children.push(connection);
+                if (connection.end === card.id)
+                    card.parents.push(connection);
+            });
+            // }
         }
 
         this.createCards(container);
@@ -113,7 +112,7 @@ var Board = React.createClass({
     },
 
     componentDidUpdate: function () {
-        var container = this.refs.container.getDOMNode();
+        var container = this.refs.container;
         this.updateBoard(container, this.props);
     },
 
@@ -130,10 +129,10 @@ var Board = React.createClass({
 
     generateLine: function (connection) {
 
-        var startCard = _.find(this.props.boardDataMutable, function (o) {
+        var startCard = _.find(this.boardDataMutable, function (o) {
             return o.id === connection.start;
         });
-        var endCard = _.find(this.props.boardDataMutable, function (o) {
+        var endCard = _.find(this.boardDataMutable, function (o) {
             return o.id === connection.end;
         });
 
@@ -148,7 +147,7 @@ var Board = React.createClass({
         var parents = this.connectionsMutable.filter(function (conn) {
             return conn.end === connection.end
         }).map(function (conn) {
-            return conn.type;
+            return conn.type + (conn.endIndex || 0);
         }).filter(function (value, index, self) {
             return self.indexOf(value) === index;
         });
@@ -156,12 +155,20 @@ var Board = React.createClass({
 
         var startConnNum = children.indexOf(connection.type + (connection.startIndex || 0)) + 1;
 
-        var endConnNum = parents.indexOf(connection.type) + 1;
+        var endConnNum = parents.indexOf(connection.type + (connection.endIndex || 0)) + 1;
+
+        var adjacentColumn = startCard.posX + 1 === endCard.posX;
+        let sameRow = startCard.posY === endCard.posY;
+        var adjacentRight = adjacentColumn && sameRow;
+        var startCardBelow = endCard.posY < startCard.posY ||
+            (sameRow && startConnNum >= endConnNum && children.length <= parents.length);
+        var startCardBefore = endCard.posX > startCard.posX;
 
         var noCardInBetween = true;
+        let noCardInBetweenNextRow = false;
 
-        if (startCard.posY === endCard.posY) {
-            var result = _.find(this.props.boardDataMutable, function (o) {
+        if (sameRow) {
+            var result = _.find(this.boardDataMutable, function (o) {
                 return o.posY === startCard.posY
                     && o.posX > Math.min(startCard.posX, endCard.posX)
                     && o.posX < Math.max(startCard.posX, endCard.posX);
@@ -169,11 +176,15 @@ var Board = React.createClass({
             noCardInBetween = typeof result === "undefined";
         }
 
-        var adjacentColumn = startCard.posX + 1 === endCard.posX;
-        var adjacentRight = adjacentColumn && startCard.posY === endCard.posY;
-        var startCardBelow = endCard.posY < startCard.posY ||
-            (startCard.posY === endCard.posY && startConnNum >= endConnNum && children.length <= parents.length);
-        var startCardBefore = endCard.posX > startCard.posX;
+        if (startCardBefore && !adjacentColumn) {
+            let result = _.find(this.boardDataMutable, function (o) {
+                return o.posY === endCard.posY
+                    && o.posX > Math.min(startCard.posX, endCard.posX)
+                    && o.posX < Math.max(startCard.posX, endCard.posX);
+            });
+            noCardInBetweenNextRow = typeof result === "undefined";
+        }
+
 
         var startCardY = startCard.posY * (height + margin);
 
@@ -200,8 +211,9 @@ var Board = React.createClass({
         var lineStartMargin = (margin * 0.25);
         var lineEndMargin = startCardBefore ? -(margin * 0.75) : -(margin * 0.25);
 
-        var centeredConnection = startCard.posY === endCard.posY && startCard.posX < endCard.posX &&
-            children.length === parents.length && startConnNum === endConnNum;
+        var centeredSame = children.length === parents.length && startConnNum === endConnNum;
+        var centeredSymmetric = Math.ceil(children.length / 2) === startConnNum && Math.ceil(parents.length / 2) === endConnNum && (parents.length > 2 || children.length > 2)
+        var centeredConnection = sameRow && startCard.posX < endCard.posX && (centeredSame || centeredSymmetric);
         var curveRadiusX = startCardBefore ? -10 : 10;
         var curveRadiusY = startCardBelow ? -10 : 10;
 
@@ -215,7 +227,7 @@ var Board = React.createClass({
                     (endCard.posY === startCard.posY && startCardBefore && startConnNum > endConnNum ? -curveRadiusY :
                         curveRadiusY));
 
-            if (noCardInBetween && (startCard.posY === endCard.posY) && startCardBefore) {
+            if (noCardInBetween && (sameRow) && startCardBefore) {
                 line += "L " + (lineStartPosX + lineStartMargin) + " " + (lineEndPosY +
                     (endCard.posY === startCard.posY && startCardBefore && startConnNum > endConnNum ? curveRadiusY :
                         -curveRadiusY));
@@ -223,13 +235,14 @@ var Board = React.createClass({
                     (lineStartPosX + lineStartMargin + Math.abs(curveRadiusX)) + " " + lineEndPosY;
             }
 
-            if (!(adjacentColumn || (noCardInBetween && (startCard.posY === endCard.posY) && startCardBefore))) {
+            if (!((noCardInBetweenNextRow && startCardBefore) || adjacentColumn || (noCardInBetween && sameRow && startCardBefore))) {
                 line += "L " + (lineStartPosX + lineStartMargin) + " " +
                     (startCardY + linePosY + (startCardBefore ? margin * 0.75 : margin * 0.25) - curveRadiusY);
                 line += "Q " + (lineStartPosX + lineStartMargin) + " " +
                     (startCardY + linePosY + (startCardBefore ? margin * 0.75 : margin * 0.25)) + " " +
                     (lineStartPosX + lineStartMargin - curveRadiusX) + " " +
                     (startCardY + linePosY + (startCardBefore ? margin * 0.75 : margin * 0.25));
+
                 line += "L " + (lineEndPosX + lineEndMargin + curveRadiusX) + " " +
                     (startCardY + linePosY + (startCardBefore ? margin * 0.75 : margin * 0.25));
                 line += "Q " + (lineEndPosX + lineEndMargin) + " " +
@@ -237,14 +250,13 @@ var Board = React.createClass({
                     (lineEndPosX + lineEndMargin) + " " +
                     (startCardY + linePosY + (startCardBefore ? margin * 0.75 : margin * 0.25)
                         + (endCard.posY === startCard.posY ? -curveRadiusY : curveRadiusY));
+
             }
 
-            if (!(noCardInBetween && (startCard.posY === endCard.posY) && startCardBefore)) {
-                line += "L " + (lineEndPosX + lineEndMargin) + " " + (lineEndPosY -
-                    (startCard.posY === endCard.posY && !startCardBefore ? -curveRadiusY :
-                        startCard.posY === endCard.posY && startCardBefore ? -curveRadiusY : curveRadiusY));
-                line += "Q " + (lineEndPosX + lineEndMargin) + " " + lineEndPosY + " " +
-                    (lineEndPosX + lineEndMargin + Math.abs(curveRadiusX)) + " " + lineEndPosY;
+            if (!(noCardInBetween && sameRow && startCardBefore)) {
+                let startPosX = (noCardInBetweenNextRow && startCardBefore) ? lineStartPosX + lineStartMargin : lineEndPosX + lineEndMargin
+                line += "L " + startPosX + " " + (lineEndPosY - (sameRow && !startCardBefore ? -curveRadiusY : sameRow && startCardBefore ? -curveRadiusY : curveRadiusY));
+                line += "Q " + startPosX + " " + lineEndPosY + " " + (startPosX + Math.abs(curveRadiusX)) + " " + lineEndPosY;
             }
         }
 
@@ -454,7 +466,7 @@ var Board = React.createClass({
                             return self.generateLine(d);
                         })
                         .attr("opacity", function (d) {
-                            var startCard = _.find(self.props.boardDataMutable, function (o) {
+                            var startCard = _.find(self.boardDataMutable, function (o) {
                                 return o.id === d.start;
                             });
 
@@ -468,7 +480,7 @@ var Board = React.createClass({
                             } else
                                 visibileStart = true;
 
-                            var endCard = _.find(self.props.boardDataMutable, function (o) {
+                            var endCard = _.find(self.boardDataMutable, function (o) {
                                 return o.id === d.end;
                             });
 
@@ -501,11 +513,11 @@ var Board = React.createClass({
         svg.selectAll(".inConnections").each(function (d) {
             var self = this;
 
-            var types = [];
+            let types = new Map();
             d.parents.forEach(function (connection) {
-                if (types.indexOf(connection.type) === -1) types.push(connection.type);
+                types.set(connection.type + (connection.endIndex || 0), connection.type)
             });
-
+            types = Array.from(types.values());
             var separation = cardHeight / (types.length + 1);
 
             d3.select(self).selectAll('*').remove();
@@ -523,14 +535,14 @@ var Board = React.createClass({
                     .attr("cy", separation * (i + 1))
                     .attr("cx", x)
                     .attr("r", diameter)
-                    .attr("fill", "#292c33")
+                    .attr("fill", ConnectionTypes.colors[type] || "#292c33")
                     .attr("stroke", "#0a0a0e")
-                    .attr("stroke-width", 1);
+                    .attr("stroke-width", 0);
 
 
                 d3.select(self).append("path")
-                    .attr("fill", "#0a0a0e")
-                    .attr("stroke", "#0a0a0e")
+                    .attr("fill", ConnectionTypes.colors[type] || "#0a0a0e")
+                    .attr("stroke", ConnectionTypes.colors[type] || "#0a0a0e")
                     .attr("stroke-width", 1)
                     .attr("stroke-linecap", "round")
                     .attr("stroke-linejoin", "round")
@@ -578,13 +590,13 @@ var Board = React.createClass({
                     .attr("cy", y)
                     .attr("cx", x)
                     .attr("r", diameter)
-                    .attr("fill", "#292c33")
+                    .attr("fill", ConnectionTypes.colors[connObj.type] || "#292c33")
                     .attr("stroke", "#0a0a0e")
-                    .attr("stroke-width", 1);
+                    .attr("stroke-width", 0);
 
                 d3.select(self).append("path")
-                    .attr("fill", "#0a0a0e")
-                    .attr("stroke", "#0a0a0e")
+                    .attr("fill", ConnectionTypes.colors[connObj.type] || "#0a0a0e")
+                    .attr("stroke", ConnectionTypes.colors[connObj.type] || "#0a0a0e")
                     .attr("stroke-width", 1)
                     .attr("stroke-linecap", "round")
                     .attr("stroke-linejoin", "round")
@@ -619,8 +631,11 @@ var Board = React.createClass({
         paths.enter()
             .append("path")
             .attr("class", "paths")
+            .attr("stroke", function (d) {
+                return ConnectionTypes.colors[d.type] || "black"
+            })
             .attr("opacity", function (d) {
-                var startCard = _.find(self.props.boardDataMutable, function (o) {
+                var startCard = _.find(self.boardDataMutable, function (o) {
                     return o.id === d.start;
                 });
 
@@ -634,7 +649,7 @@ var Board = React.createClass({
                 } else
                     visibileStart = true;
 
-                var endCard = _.find(self.props.boardDataMutable, function (o) {
+                var endCard = _.find(self.boardDataMutable, function (o) {
                     return o.id === d.end;
                 });
 
@@ -694,7 +709,7 @@ var Board = React.createClass({
                     .style("stroke", null)
                     .style("stroke-dasharray", null)
                     .attr("opacity", function (d) {
-                        var startCard = _.find(self.props.boardDataMutable, function (o) {
+                        var startCard = _.find(self.boardDataMutable, function (o) {
                             return o.id === d.start;
                         });
 
@@ -708,7 +723,7 @@ var Board = React.createClass({
                         } else
                             visibileStart = true;
 
-                        var endCard = _.find(self.props.boardDataMutable, function (o) {
+                        var endCard = _.find(self.boardDataMutable, function (o) {
                             return o.id === d.end;
                         });
 
@@ -758,7 +773,7 @@ var Board = React.createClass({
 
         var squares = d3.select("#cardGroup")
             .selectAll(".card-container")
-            .data(d3.values(this.props.boardDataMutable), function (d) {
+            .data(d3.values(this.boardDataMutable), function (d) {
                 return d.id;
             });
 
@@ -862,14 +877,14 @@ var Board = React.createClass({
         svg.selectAll(".card-background")
             .style("stroke", function (d) {
                 if (d.id === self.props.selectedCard
-                    && self.props.rightSideBarOpen)
+                    && self.props.floatingMenuIndex === 1)
                     return "#2196F3";
                 else
                     return null;
             })
             .style("stroke-width", function (d) {
                 if (d.id === self.props.selectedCard
-                    && self.props.rightSideBarOpen)
+                    && self.props.floatingMenuIndex === 1)
                     return 3;
                 else
                     return null;
@@ -1097,39 +1112,66 @@ var Board = React.createClass({
             .attr("dominant-baseline", "central")
             .attr("font-size", Math.min(width, height) * 0.09)
             .attr("x", widthFull * 0.5)
-            .attr("y", height * 0.10);
+            .attr("y", height * 0.04);
 
         titleElements
             .append("tspan")
             .attr("class", "cardTitle")
             .text(function (d) {
-                if (d.finishedWork || d.category === 'viz') {
-                    if (d.title.length > 15)
-                        return d.title.substring(0, 15) + "...";
-                    else
-                        return d.title;
-                } else {
-                    if (d.title.length > 14)
-                        return " " + d.title.substring(0, 14) + "...";
-                    else
-                        return " " + d.title;
-                }
+                // if (d.finishedWork || d.category === 'viz') {
+                //     if (d.title.length > 15)
+                //         return d.title.substring(0, 15) + "...";
+                //     else
+                //         return d.title;
+                // } else {
+                //     if (d.title.length > 14)
+                //         return " " + d.title.substring(0, 14) + "...";
+                //     else
+                //         return " " + d.title;
+                // }
+                return d.title;
             });
 
 
-        titleElements
+        var subTitleElements = cardFooter
+            .append("text")
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "central")
+            .attr("font-size", Math.min(width, height) * 0.09)
+            .attr("x", widthFull * 0.5)
+            .attr("y", height * 0.14);
+
+        subTitleElements
             .append("tspan")
             .text(function (d) {
-                return " " + d.id;
+                // if (d.finishedWork || d.category === 'viz') {
+                //     if (d.title.length > 15)
+                //         return d.title.substring(0, 15) + "...";
+                //     else
+                //         return d.title;
+                // } else {
+                //     if (d.title.length > 14)
+                //         return " " + d.title.substring(0, 14) + "...";
+                //     else
+                //         return " " + d.title;
+                // }
+                return vizParams.cards[d.type].title;
             });
 
 
-        cardFooter
-            .append("rect")
-            .attr("x", 0)
-            .attr("width", widthFull)
-            .attr("y", 0)
-            .attr("height", 3);
+        // titleElements
+        //     .append("tspan")
+        //     .text(function (d) {
+        //         return " " + d.id;
+        //     });
+
+
+        // cardFooter
+        //     .append("rect")
+        //     .attr("x", 0)
+        //     .attr("width", widthFull)
+        //     .attr("y", 0)
+        //     .attr("height", 3);
 
 
         cardColors
@@ -1146,7 +1188,7 @@ var Board = React.createClass({
                 cardColor.selectAll('.colorCircle').remove();
                 var colorLength = d._layer.length; //TODO: check if all layerOptions still exist
                 var initialX = (widthFull -
-                    (((buttonWidth / 4) * colorLength) + ((widthFull * 0.1 - buttonWidth / 4) * (colorLength - 1)))) /
+                        (((buttonWidth / 4) * colorLength) + ((widthFull * 0.1 - buttonWidth / 4) * (colorLength - 1)))) /
                     2;
                 d._layer.forEach(function (layerID, i) {
                     if (self.props.layers.byId[layerID]) {
@@ -1171,7 +1213,7 @@ var Board = React.createClass({
                 cardColor.selectAll('.colorCircle').remove();
                 var colorLength = d._layer.length; //TODO: check if all layerOptions still exist
                 var initialX = (widthFull -
-                    (((buttonWidth / 4) * colorLength) + ((widthFull * 0.1 - buttonWidth / 4) * (colorLength - 1)))) /
+                        (((buttonWidth / 4) * colorLength) + ((widthFull * 0.1 - buttonWidth / 4) * (colorLength - 1)))) /
                     2;
                 d._layer.forEach(function (layerID, i) {
                     if (self.props.layers.byId[layerID]) {
@@ -1318,13 +1360,6 @@ var Board = React.createClass({
         cardLeftSideTop.append("rect")
             .attr("fill", "#F8F8F8")
             .attr("x", 0)
-            .attr("height", cardHeight)
-            .attr("width", 25);
-
-
-        cardLeftSideTop.append("rect")
-            .attr("fill", "#F8F8F8")
-            .attr("x", 0)
             .attr("rx", 3)
             .attr("ry", 3)
             .attr("height", cardHeight)
@@ -1333,12 +1368,12 @@ var Board = React.createClass({
                 self.showingConnOut.end = d.id;
                 self.showConnOut(container);
                 d3.select(container).selectAll('.conn-in').style('opacity', null);
-                d3.select(this.parentNode.parentNode).select('.conn-in').style('opacity', 1);
+                //d3.select(this.parentNode.parentNode).select('.conn-in').style('opacity', 1);
             });
 
         cardLeftSideTop.append("rect")
             .attr("fill", "#dedede")
-            .attr("x", 28)
+            .attr("x", 27)
             .attr("height", cardHeight)
             .attr("width", 1);
 
@@ -1394,17 +1429,7 @@ var Board = React.createClass({
 
         d3.selectAll(".cardTitle")
             .text(function (d) {
-                if (d.finishedWork || d.category === 'viz') {
-                    if (d.title.length > 15)
-                        return d.title.substring(0, 15) + "...";
-                    else
-                        return d.title;
-                } else {
-                    if (d.title.length > 14)
-                        return " " + d.title.substring(0, 14) + "...";
-                    else
-                        return " " + d.title;
-                }
+                return d.title;
             });
 
         d3.selectAll(".connectionsIn")
@@ -1647,8 +1672,8 @@ var Board = React.createClass({
     _handleRemoveCard: function () {
         var self = this;
         return function (d) {
+            delete self.boardDataMutable[d.id];
             self.props.dispatch({type: ActionTypes.REMOVE_CARD, id: d.id});
-            self.props.dispatch({type: ActionTypes.SELECT_CARD, id: -1});
         }
     },
 
@@ -1698,7 +1723,7 @@ var Board = React.createClass({
                 svg.selectAll(".paths").attr("d", function (d) {
                     return self.generateLine(d);
                 }).attr("opacity", function (d) {
-                    var startCard = _.find(self.props.boardDataMutable, function (o) {
+                    var startCard = _.find(self.boardDataMutable, function (o) {
                         return o.id === d.start;
                     });
 
@@ -1712,7 +1737,7 @@ var Board = React.createClass({
                     } else
                         visibileStart = true;
 
-                    var endCard = _.find(self.props.boardDataMutable, function (o) {
+                    var endCard = _.find(self.boardDataMutable, function (o) {
                         return o.id === d.end;
                     });
 
@@ -1840,9 +1865,9 @@ var Board = React.createClass({
     _centerOnCard: function () {
         if (this.props.selectedCard !== -1) {
             this.scale = 1;
-            this.translate[0] = 0 - this.props.boardDataMutable[this.props.selectedCard].posX * (width + margin) +
+            this.translate[0] = 0 - this.boardDataMutable[this.props.selectedCard].posX * (width + margin) +
                 $(this.svg.node()).parent().width() * 0.5 - width * 0.5 - 40;
-            this.translate[1] = 0 - this.props.boardDataMutable[this.props.selectedCard].posY * (height + margin) +
+            this.translate[1] = 0 - this.boardDataMutable[this.props.selectedCard].posY * (height + margin) +
                 $(this.svg.node()).parent().height() * 0.5 - 80 - height * 0.5 - 40;
             if (isNaN(this.translate[0])) this.translate[0] = 0;
             if (isNaN(this.translate[1])) this.translate[1] = 0;
@@ -1916,7 +1941,7 @@ function mapStateToProps(state) {
         lastCardID: state.cards.lastId,
         selectedCard: state.ui.selectedCard,
         highlightedConn: state.connections.highlighted,
-        rightSideBarOpen: state.ui.rightSideBarOpen,
+        floatingMenuIndex: state.ui.floatingMenuIndex,
         scale: state.ui.scale,
         translate: state.ui.translate,
         cards: state.cards,

@@ -29,11 +29,8 @@ class View {
             '<div class="viz-panel-heading">' +
             '<div class="d-flex">' +
             ' <span class="font-weight-bold title">' +
-            workerSupervisor.board.cards[cardId].title + ' - ' + cardId +
+            workerSupervisor.board.cards[cardId].title +
             ' </span>' +
-            ' <div class="btn-edit-title">' +
-            '  <i class="fa fa-pen"/>' +
-            ' </div>' +
             '</div>' +
             '<div>' +
             optionsButton +
@@ -70,7 +67,7 @@ class View {
     initPlaceHolder() {
         $(this.container).empty();
         $(this.container).append(
-            ' <div class="h-100 w-100 d-flex align-items-center justify-content-center">' +
+            ' <div class="h-100 w-100 d-flex align-items-center justify-content-center flex-column">' +
             '  <i class="fa fa-spinner fa-spin" style="font-size:48px"/>' +
             '  <h2>Loading visualization...</h2>' +
             ' </div>');
@@ -124,11 +121,13 @@ class View {
         try {
             this.generateProps().then(function () {
                 if (self.viewProperties[1].data
-                    && (self.viewProperties[1].data.data === undefined || self.viewProperties[1].data.data.length === 0))
+                    && (self.viewProperties[1].data.data === undefined))
                     self.setDataError();
                 else
                     self.call("init");
+                // workerSupervisor.removeData(self.cardId)
             });
+
         } catch (e) {
             this.showError(e);
         }
@@ -139,10 +138,11 @@ class View {
         try {
             this.generateProps().then(function () {
                 if (self.viewProperties[1].data
-                    && (self.viewProperties[1].data.data === undefined || self.viewProperties[1].data.data.length === 0))
+                    && (self.viewProperties[1].data.data === undefined))
                     self.setDataError();
                 else
                     self.call("update");
+                // workerSupervisor.removeData(self.cardId)
             });
         } catch (e) {
             this.showError(e);
@@ -153,7 +153,7 @@ class View {
         try {
             this.viewClass[methodName].apply(this.viewClass, this.viewProperties);
         } catch (e) {
-            //this.showError(e);
+            this.showError(e);
         }
     }
 
@@ -177,6 +177,7 @@ class View {
         if (this.isOptionView)
             try {
                 this.viewClass.unMount();
+                delete this.viewClass
             } catch (e) {
                 console.log(e);
             }
@@ -246,6 +247,7 @@ class View {
                     }
                 }
             });
+            input.system = {files: window.files}
             self.viewProperties[1] = input;
         });
     }

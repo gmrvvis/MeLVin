@@ -17,7 +17,7 @@ class WorkerSupervisor {
         this.working = {};
         this.workingQueue = [];
         this.workers = {};
-        this.maxWorkers = 2;
+        this.maxWorkers = 1;
         this.loadedIDs = {};
         this.currentDataSets = {};
         this.currentSchemas = {};
@@ -30,7 +30,7 @@ class WorkerSupervisor {
         this.working = {};
         this.workingQueue = [];
         this.workers = {};
-        this.maxWorkers = 2;
+        this.maxWorkers = 1;
         this.loadedIDs = {};
         this.currentDataSets = {};
         this.currentSchemas = {};
@@ -213,13 +213,19 @@ class WorkerSupervisor {
         });
     }
 
+    // removeData(cardKey){
+    //     this.currentDataSets[this.getDataOperationList(cardKey).branchId] = null;
+    //     delete this.currentDataSets[this.getDataOperationList(cardKey).branchId]
+    // }
+
     loadData(cardKey) {
         var self = this;
         var operationList = this.getDataOperationList(cardKey);
         if (operationList.operations.length > 0) {
             var branchID = operationList.branchId;
+            // TODO: cache data handlers
             if (Object.keys(this.loadedIDs).indexOf(branchID + "") === -1) {
-                self.loadedIDs[branchID] = this.getDataTable(cardKey, operationList).then(function (dataTable) {
+                this.loadedIDs[branchID] = this.getDataTable(cardKey, operationList).then(function (dataTable) {
                     self.currentDataSets[branchID] = dataTable;
                     return Promise.resolve();
                 });
@@ -413,7 +419,9 @@ class WorkerSupervisor {
                         if (input[ConnectionTypes.property[connection.type]] === undefined)
                             input[ConnectionTypes.property[connection.type]] = [];
 
-                        var isUniqueConnection = _.filter(vizParams.cards[self.board.cards[cardKey].type].inConnections, {type: connection.type})[0].unique;
+                        //var isUniqueConnection = _.filter(vizParams.cards[self.board.cards[cardKey].type].inConnections, {type: connection.type})[0].unique;
+                        let inputConnType = _.filter(vizParams.cards[self.board.cards[cardKey].type].inConnections, {type: connection.type});
+                        let isUniqueConnection = inputConnType.length === 1 && inputConnType[0].unique;
                         if (isUniqueConnection)
                             input[ConnectionTypes.property[connection.type]] = self.board.cards[connection.start][ConnectionTypes.property[connection.type]];
                         else

@@ -46,7 +46,7 @@ var MainNavBar = React.createClass({
 
     componentDidMount() {
         if (this.props.currentSessionID !== -1) {
-            var width = $(this.refs.tabs.getDOMNode()).width();
+            var width = $(this.refs.tabs).width();
             let numTabs = Math.floor((width - 200) / 200);
             let maxPages = Math.ceil(this.props.panels.allIds.length / numTabs);
             this.setState({width: width, numTabs: numTabs, maxPages: maxPages});
@@ -55,7 +55,7 @@ var MainNavBar = React.createClass({
 
     componentDidUpdate(prevProps) {
         if (this.props !== prevProps && this.props.currentSessionID !== -1) {
-            var width = $(this.refs.tabs.getDOMNode()).width();
+            var width = $(this.refs.tabs).width();
             let numTabs = Math.floor((width - 200) / 200);
             let maxPages = Math.ceil(this.props.panels.allIds.length / numTabs);
             this.setState({width: width, numTabs: numTabs, maxPages: maxPages})
@@ -158,14 +158,13 @@ var MainNavBar = React.createClass({
                                onClick={this._togglePanelSidebar(id)}>
                                 <div>
                                     <span className="fa fa-poll" style={{marginRight: "4px"}}/>
-                                    <span>{" " + panel.title + " "}</span>
+                                    <span>{" " + panel.title + " " + panel.id}</span>
                                 </div>
                                 <i className="fa fa-cog"/>
                             </a>
                         </li>
                     )
-                }
-                else {
+                } else {
                     tabs.push(
                         <li className={className}>
                             <a href="#" style={{width: "190px"}} onClick={
@@ -175,7 +174,7 @@ var MainNavBar = React.createClass({
                             }
                             >
                                 <span className="fa fa-poll"/>
-                                <span>{" " + panel.title + " "}</span>
+                                <span>{" " + panel.title + " " + panel.id}</span>
                             </a>
                         </li>
                     )
@@ -283,7 +282,7 @@ var MainNavBar = React.createClass({
                     <ul className="nav-tab border-r logo">
                         <li className={homeClass}>
                             <a href="#">
-                                <span className="fa fa-th" style={{marginRight: "0"}}/></a>
+                                <span className="fa fa-house" style={{marginRight: "0"}}/></a>
                         </li>
                     </ul>
                     <span className="pl-3"><span style={{fontSize: "16px", lineHeight: "16px"}}>MeLVin</span></span>

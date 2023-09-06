@@ -34,7 +34,7 @@ var Options = React.createClass({
         var inPanel = this.props.inPanel;
         var selectedCard = this.props.selectedCard;
 
-        if (selectedCard >= 0) {
+        if (selectedCard >= 0 && this.props.cards.byId[selectedCard] !== undefined) {
             var optionsContent;
             var self = this;
             var ancestors = [];
@@ -60,7 +60,8 @@ var Options = React.createClass({
                     optionsContent = <CustomCardOptions selectedCard={selectedCard}
                                                         inPanel={inPanel}
                                                         saveInternalState={this.saveInternalState()}
-                                                        startWork={this.startWork}/>;
+                                                        startWork={this.startWork}
+                                                        key={selectedCard}/>;
             }
             return (
                 <div className="pt-3 h-100 overflow-y">

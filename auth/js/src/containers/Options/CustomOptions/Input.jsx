@@ -31,6 +31,16 @@ var Input = React.createClass({
         this.setState({value: event.target.value});
     },
 
+    onSetValue: function (value) {
+        let self = this;
+        return function () {
+            if (value !== self.state.value) {
+                self.props.onUpdateOption("value", value);
+                self.setState({value: value, editing: false});
+            }
+        }
+    },
+
     onEditId: function () {
         this.setState({editingId: true})
     },
@@ -61,6 +71,8 @@ var Input = React.createClass({
     },
 
     render: function () {
+        let self = this;
+
 
 
         var help;
@@ -93,7 +105,8 @@ var Input = React.createClass({
                        placeholder={this.props.generalOptions.placeholder}
                        className="form-control"
                        spellCheck="false"
-                       disabled defaultValue={this.state.value}/>
+                       disabled value={this.state.value}
+                />
                 {editButton}
             </div>
         );
@@ -112,17 +125,34 @@ var Input = React.createClass({
             );
         }
 
+
         //Keys on button prevents focus style from persisting
         if (this.state.editing) {
+            let attributesDropDown = this.props.attributes.map(function (attr) {
+                return <a className="dropdown-item" href="#" onClick={self.onSetValue(attr)}>{attr}</a>
+            });
             input = (
                 <div className="input-group pl-2">
                     <input type="text"
                            placeholder={this.props.generalOptions.placeholder}
                            className="form-control"
-                           spellCheck="false" defaultValue={this.state.value}
+                           spellCheck="false" value={this.state.value}
                            onChange={this.onChange}/>
                     <div className="input-group-append">
                         {lockButton}
+                        <div className="dropdown">
+                            <button key="4"
+                                    type="button"
+                                    className="btn btn-outline-primary dropdown-toggle border-right-0 border-radius-0"
+                                    data-toggle="dropdown">
+                            </button>
+                            <div className="dropdown-menu scrollable-drop">
+                                {attributesDropDown}
+                                {/*<div className="dropdown-divider"></div>*/}
+                                {/*<h6 className="dropdown-header">Suggestions might not be correct</h6>*/}
+                                {/*<h6 className="dropdown-header">until complete DFD execution.</h6>*/}
+                            </div>
+                        </div>
                         <button key="0"
                                 type="button"
                                 className="btn btn-outline-success"

@@ -1,8 +1,8 @@
 if (typeof importScripts === "function") {
-    importScripts('../../js/vendor/dexie.min.js');
+    importScripts('../../js/src/model/DataHandling/DB.js');
     importScripts('../../js/src/model/DataHandling/DataHandler.js');
 } else {
-    var Dexie = require('dexie').default;
+    var db = require("./DB.js");
 }
 
 class DataFactory {
@@ -15,14 +15,9 @@ class DataFactory {
             this.DataHandler = DataHandler;
 
 
-        this.db = new Dexie(dbName);
-        this.db.version(1).stores({
-            schemas: "name,schema",
-            changes: "name,change",
-            datasets: "name, source, dataset",
-            metadata: "name,metadata"
-        });
+        this.db = db;
         this.db.open();
+        this.currentID = currentID;
         this.currentID = currentID;
         this.operationOpj = operationOpj;
         this.schemaOfEachSource = {};
@@ -73,7 +68,7 @@ class DataFactory {
             });
 
             data.forEach(function (data) {
-                dataOfEachSource[data.source] = dataOfEachSource[data.source].concat(JSON.parse(data.dataset));
+                dataOfEachSource[data.source] = dataOfEachSource[data.source].concat(data.dataset);//dataOfEachSource[data.source].concat(JSON.parse(data.dataset));
             });
 
             self.initialFiles = dataOfEachSource;
@@ -141,35 +136,37 @@ class DataFactory {
                     return self.schemaOfEachSource["DataSource" + input][0];
                 });
             }
-            if(parsedChanges["DataSource" + operation.id])
-            (parsedChanges["DataSource" + operation.id].change || []).forEach(function (change) {
-                switch (change.type) {
-                    case "ADD_ROW":
-                        self.addRow(data, schema, change.row, change.index);
-                        break;
-                    case "UPDATE_ROW":
-                        self.updateRow(data, schema, change.rowIndex, change.row, change.index);
-                        break;
-                    case "REMOVE_ROW":
-                        self.removeRow(data, schema, change.rowIndex, change.index);
-                        break;
-                    case "ADD_COLUMN":
-                        self.addColumn(data, schema, change.columnName, change.column, change.attr, change.index);
-                        break;
-                    case "UPDATE_COLUMN":
-                        self.updateColumn(data, schema, change.columnIndex, change.column, change.attr, change.index);
-                        break;
-                    case "REMOVE_COLUMN":
-                        self.removeColumn(data, schema, change.columnIndex, change.index);
-                        break;
-                    case "DATA_MERGE":
-                        self.mergeDataset(data, schema);
-                        break;
-                    case "ADD_DATASET":
-                        self.addDataset(data, schema, change.dataset, change.schema);
-                        break;
-                }
-            });
+            if (parsedChanges["DataSource" + operation.id])
+                (parsedChanges["DataSource" + operation.id].change || []).forEach(function (change) {
+                    switch (change.type) {
+                        case "ADD_ROW":
+                            self.addRow(data, schema, change.row, change.index);
+                            break;
+                        case "UPDATE_ROW":
+                            self.updateRow(data, schema, change.rowIndex, change.row, change.index);
+                            break;
+                        case "REMOVE_ROW":
+                            self.removeRow(data, schema, change.rowIndex, change.index);
+                            break;
+                        case "ADD_COLUMN":
+                            self.addColumn(data, schema, change.columnName, change.column, change.attr, change.index);
+                            break;
+                        case "UPDATE_COLUMN":
+                            self.updateColumn(data, schema, change.columnIndex, change.column, change.attr, change.index);
+                            break;
+                        case "REMOVE_COLUMN":
+                            self.removeColumn(data, schema, change.columnIndex, change.index);
+                            break;
+                        case "DATA_MERGE":
+                            self.mergeDataset(data, schema);
+                            break;
+                        case "ADD_DATASET":
+                            self.addDataset(data, schema, change.dataset, change.schema);
+                            break;
+                        case "REMOVE_DATASET":
+                            self.removeDataset(data, schema, change.index)
+                    }
+                });
 
             operation.remove.forEach(function (removeID) {
                 self.dataOfEachSource["DataSource" + removeID] = undefined;
@@ -208,16 +205,16 @@ class DataFactory {
         }
     }
 
-    getColumnIndex(schema, originalIndex, datasetIndex) {
+    getColumnIndex(data, schema, originalIndex, datasetIndex) {
         datasetIndex = datasetIndex || 0;
-        schema = data[datasetIndex];
+        let schemaAux = schema[datasetIndex];
         if (Number.isInteger(originalIndex)) {
-            if (originalIndex >= 0 && originalIndex < Object.keys(schema.attributes).length)
+            if (originalIndex >= 0 && originalIndex < Object.keys(schemaAux.attributes).length)
                 return originalIndex;
             else
                 return -1;
         } else {
-            return Object.keys(schema.attributes).indexOf(originalIndex);
+            return Object.keys(schemaAux.attributes).indexOf(originalIndex);
         }
     }
 
@@ -253,7 +250,7 @@ class DataFactory {
     }
 
     updateColumn(data, schema, columnIndex, column, attr, datasetIndex) {
-        columnIndex = this.getColumnIndex(schema, columnIndex, datasetIndex);
+        columnIndex = this.getColumnIndex(data, schema, columnIndex, datasetIndex);
 
         var columnName = Object.keys(schema[datasetIndex].attributes).indexOf(columnIndex);
         var isCategorical = typeof column[i] === "string";
@@ -273,7 +270,7 @@ class DataFactory {
     }
 
     removeColumn(data, schema, columnIndex, datasetIndex) {
-        columnIndex = this.getColumnIndex(schema, columnIndex, datasetIndex);
+        columnIndex = this.getColumnIndex(data, schema, columnIndex, datasetIndex);
         data[datasetIndex] = data[datasetIndex].map(function (data) {
             data.splice(columnIndex, 1);
             return data;
@@ -295,6 +292,13 @@ class DataFactory {
     addDataset(data, schema, dataset, datasetSchema) {
         data[data.length] = dataset;
         schema[schema.length] = datasetSchema;
+    }
+
+    removeDataset(data, schema, index) {
+        if (index >= 0 && index < data.length) {
+            data = data.splice(index, 1)
+            schema = schema.splice(index, 1)
+        }
     }
 
 }

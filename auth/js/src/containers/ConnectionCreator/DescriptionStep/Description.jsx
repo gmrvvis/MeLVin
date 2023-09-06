@@ -53,10 +53,11 @@ var Description = React.createClass({
 
 
     onSaveChildren: function () {
-        var data = {
+        let data = {
             title: this.state.title,
             type: this.state.type,
-            desc: this.state.desc
+            desc: this.state.desc,
+            color: this.state.color
         };
         if (this.state.type !== structTypes.OBJECT)
             data.children = [];
@@ -130,17 +131,23 @@ var Description = React.createClass({
         var descriptionContent = (
             <div className="p-3 flex-grow-1 mh-0" style={{overflow: "auto"}}>
                 <div className="row mb-3">
-                    <div className="col-6">
+                    <div className="col-5">
                         <label className="font-weight-bold">Connection name</label>
                         <input className="form-control" onChange={this.onUpdateField("name")}
                                defaultValue={this.props.name}/>
                         <small>Connection name</small>
                     </div>
-                    <div className="col-6">
+                    <div className="col-5">
                         <label className="font-weight-bold">Property name</label>
                         <input className="form-control" onChange={this.onUpdateField("property")}
                                defaultValue={this.props.property}/>
                         <small>Property name to be copied through the connection</small>
+                    </div>
+                    <div className="col-2">
+                        <label className="font-weight-bold">Color</label>
+                        <input type="color" className="form-control" onChange={this.onUpdateField("color")}
+                               defaultValue={this.props.color}/>
+                        <small>Connection color</small>
                     </div>
                 </div>
                 <div className="row">

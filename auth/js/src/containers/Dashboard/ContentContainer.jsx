@@ -3,7 +3,7 @@
 var React = require('react');
 var ContentContainer = React.createClass({
     render: function () {
-        var containerClass = this.props.contract ? 'row' : 'row flex-grow';
+        var containerClass = this.props.contract ? 'row' : 'row flex-grow height-0';
         return (
             <div className={"container-fluid pt-5 pb-5 d-flex justify-content-center home-page " + this.props.fadeClass}
                  style={{height: "calc(100vh - 60px)"}}>
